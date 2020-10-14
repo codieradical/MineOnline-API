@@ -2,14 +2,12 @@ from flask import request, send_file, Response
 from datetime import datetime, timedelta, timezone
 from bson.objectid import ObjectId
 
-from routes.legacy.launcher import register_routes as register_launcher_routes
 from routes.legacy.skins import register_routes as register_skins_routes
 from routes.legacy.server_auth import register_routes as register_server_auth_routes
 from routes.legacy.levels import register_routes as register_levels_routes
 from routes.legacy.website import register_routes as register_website_routes
 
 def register_routes(app, mongo):
-    register_launcher_routes(app, mongo)
     register_skins_routes(app, mongo)
     register_server_auth_routes(app, mongo)
     register_levels_routes(app, mongo)
@@ -30,14 +28,14 @@ def register_routes(app, mongo):
     def haspaid():
         username = request.args.get('user')
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"user" : username})
-        except:
-            return Response("false")
+        # try:
+        #     users = mongo.db.users
+        #     user = users.find_one({"user" : username})
+        # except:
+        #     return Response("false")
         
-        if not user or not user['premium']:
-            return Response("false")
+        # if not user or not user['premium']:
+        #     return Response("false")
 
         return Response("true")
 
@@ -128,3 +126,25 @@ def register_routes(app, mongo):
             return Response("Something went wrong.", 500)
 
         return Response("Something went wrong.", 500)
+
+    @app.route('/login/session.jsp')
+    def checksession():
+        username = request.args.get('name')
+        sessionId = request.args.get('session')
+
+        # user = None
+        
+        # try:
+        #     users = mongo.db.users
+        #     user = users.find_one({"sessionId": ObjectId(sessionId), "user": username})
+
+        #     if user and user['premium']:
+        #         return Response("ok")
+        #     else:
+        #         return Response("Invalid Session", 400)
+        # except:
+        #     return Response("Invalid Session", 400)
+
+        # return Response("Invalid Session", 400)
+
+        return Response("ok")

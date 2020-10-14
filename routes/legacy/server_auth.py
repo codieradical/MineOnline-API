@@ -45,26 +45,6 @@ def register_routes(app, mongo):
 
         return Response("Something went wrong.")
 
-    @app.route('/login/session.jsp')
-    def checksession():
-        username = request.args.get('name')
-        sessionId = request.args.get('session')
-
-        user = None
-        
-        try:
-            users = mongo.db.users
-            user = users.find_one({"sessionId": ObjectId(sessionId), "user": username})
-
-            if user and user['premium']:
-                return Response("ok")
-            else:
-                return Response("Invalid Session", 400)
-        except:
-            return Response("Invalid Session", 400)
-
-        return Response("Invalid Session", 400)
-
     @app.route('/game/checkserver.jsp')
     def checkserver():
         username = request.args.get('user')

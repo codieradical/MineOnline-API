@@ -11,10 +11,10 @@ import sys
 from utils.versions import get_versions
 from utils.database import getclassicservers
 from uuid import uuid4, UUID
+import jwt
 
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
-    @app.route("/mineonline/servers/<uuid>", methods=["DELETE"])
     def deleteserver(uuid):
         mongo.db.classicservers.delete_one({"uuid": str(UUID(uuid))})
         return Response("ok", 200)
@@ -34,7 +34,6 @@ def register_routes(app, mongo):
         }))
 
     @app.route("/api/servers", methods=["POST"])
-    @app.route("/mineonline/servers", methods=["POST"])
     def addserver():
         port = request.json['port']
         maxUsers = request.json['max']
@@ -102,43 +101,35 @@ def register_routes(app, mongo):
 
             users = request.json['users'] if 'users' in request.json else 0
 
-            while(True):
-                cursor = classicservers.find_one(sort = [("realmId", DESCENDING)])
-                seq = cursor["realmId"] + 1 if cursor != None and "realmId" in cursor and cursor["realmId"] != None else 1
 
-                try:
-                    classicservers.insert_one({
-                        "salt": currentlisting["salt"] if currentlisting != None and "salt" in currentlisting else None,
-                        "realmId": currentlisting["realmId"] if currentlisting != None and "realmId" in currentlisting else seq,
-                        "createdAt": datetime.utcnow(),
-                        "expiresAt": datetime.now(timezone.utc) + expireDuration,
-                        "ip": ip,
-                        "port": port,
-                        "users": users,
-                        "maxUsers": maxUsers,
-                        "name": name,
-                        "onlinemode": onlinemode,
-                        "versionName": versionName,
-                        "md5": md5,
-                        "whitelisted": whitelisted,
-                        "whitelistUsers": whitelistUsers,
-                        "whitelistIPs": whitelistIPs,
-                        "whitelistUUIDs": whitelistUUIDs,
-                        "bannedUsers": bannedUsers,
-                        "bannedIPs": bannedIPs,
-                        "bannedUUIDs": bannedUUIDs,
-                        "players": players,
-                        "ownerUUID": ownerUUID,
-                        "owner": owner,
-                        "uuid": uuid
-                    })
-                except errors.WriteError as writeError:
-                    if writeError.code == 11000:
-                        continue
-                    else:
-                        return Response("Something went wrong.", 500)
+            try:
+                classicservers.insert_one({
+                    "salt": currentlisting["salt"] if currentlisting != None and "salt" in currentlisting else None,
+                    "createdAt": datetime.utcnow(),
+                    "expiresAt": datetime.now(timezone.utc) + expireDuration,
+                    "ip": ip,
+                    "port": port,
+                    "users": users,
+                    "maxUsers": maxUsers,
+                    "name": name,
+                    "onlinemode": onlinemode,
+                    "versionName": versionName,
+                    "md5": md5,
+                    "whitelisted": whitelisted,
+                    "whitelistUsers": whitelistUsers,
+                    "whitelistIPs": whitelistIPs,
+                    "whitelistUUIDs": whitelistUUIDs,
+                    "bannedUsers": bannedUsers,
+                    "bannedIPs": bannedIPs,
+                    "bannedUUIDs": bannedUUIDs,
+                    "players": players,
+                    "uuid": uuid
+                })
 
-                break
+            except:
+                return Response("Something went wrong.", 500)
+
+
                         
             return make_response(json.dumps({
                 "uuid": uuid
@@ -150,21 +141,20 @@ def register_routes(app, mongo):
         return Response("Something went wrong.", 500)
 
     @app.route("/api/servers", methods=["GET"])
-    @app.route("/mineonline/servers", methods=["GET"])
     def listservers():
-        sessionId = request.args.get('sessionId')
+        username = request.args.get('username')
+        uuid = request.args.get('uuid')
 
-        user = None
+        user = {
+            "user": None,
+            "uuid": None
+        }
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"sessionId": ObjectId(sessionId)})
-        except:
-            pass
-        #     return Response("Invalid Session", 401)
-
-        # if (user == None):
-        #     return Response("Invalid Session", 401)
+        if "username" in request.args or "uuid" in request.args:
+            user = {
+                "user": username,
+                "uuid": uuid
+            }
 
         mineOnlineServers = getclassicservers(mongo)
         featuredServers = list(mongo.db.featuredservers.find())
@@ -215,7 +205,6 @@ def register_routes(app, mongo):
         return Response(json.dumps(servers))
 
     @app.route("/api/getserver", methods=["GET"])
-    @app.route("/mineonline/getserver", methods=["GET"])
     def getserver():
         serverIP = request.args.get('serverIP')
         serverPort = request.args.get('serverPort')
@@ -253,24 +242,21 @@ def register_routes(app, mongo):
 
         return Response(json.dumps(mapServer(server)))
 
-    # Classic authentication route.
-    # Modified for mineonline.
+    # Couly be stricter:
+    # 1. Verify token is still valid.
+    # 2. Check that username belongs to uuid
     @app.route('/api/servertoken')
-    @app.route('/mineonline/servertoken')
-    @app.route('/mineonline/mppass.jsp')
-    def getmmpass():
+    def getmojangmmpass():
         sessionId = request.args['sessionId']
         serverIP = request.args['serverIP']
         serverPort = request.args['serverPort']
+        uuid = request.args['uuid']
+        username = request.args['username']
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"sessionId": ObjectId(sessionId)})
-        except:
-            return Response("User not found.", 404)
+        decoded = jwt.decode(sessionId, verify=False)
 
-        if (user == None):
-            return Response("User not found.", 404)
+        if (decoded["spr"] != uuid):
+            return Response("Invalid Session", 401)
 
         try:
             server = mongo.db.classicservers.find_one({"ip": serverIP, "port": serverPort})
@@ -279,7 +265,7 @@ def register_routes(app, mongo):
 
         if server:
             if "salt" in server:
-                mppass = str(hashlib.md5((server['salt'] + user['user']).encode('utf-8')).hexdigest())
+                mppass = str(hashlib.md5((server['salt'] + username).encode('utf-8')).hexdigest())
                 return Response(mppass)
             else:
                 return Response("Classic server not found.", 404)

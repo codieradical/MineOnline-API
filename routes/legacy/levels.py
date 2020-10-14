@@ -17,27 +17,29 @@ def register_routes(app, mongo):
         username = request.args['user']
         maps = None
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"user" : username})
-        except:
-            return Response("User not found.", 404)
+        return Response("Not Yet Implemented", 500)
 
-        if (user == None):
-            return Response("User not found.", 404)
+        # try:
+        #     users = mongo.db.users
+        #     user = users.find_one({"user" : username})
+        # except:
+        #     return Response("User not found.", 404)
 
-        if 'maps' in user:
-            maps = user['maps']
-        else:
-            return Response("-;-;-;-;-")
+        # if (user == None):
+        #     return Response("User not found.", 404)
 
-        return Response(';'.join([
-            maps['0']['name'] if '0' in maps else '-',
-            maps['1']['name'] if '1' in maps else '-',
-            maps['2']['name'] if '2' in maps else '-',
-            maps['3']['name'] if '3' in maps else '-',
-            maps['4']['name'] if '4' in maps else '-',
-        ]))
+        # if 'maps' in user:
+        #     maps = user['maps']
+        # else:
+        #     return Response("-;-;-;-;-")
+
+        # return Response(';'.join([
+        #     maps['0']['name'] if '0' in maps else '-',
+        #     maps['1']['name'] if '1' in maps else '-',
+        #     maps['2']['name'] if '2' in maps else '-',
+        #     maps['3']['name'] if '3' in maps else '-',
+        #     maps['4']['name'] if '4' in maps else '-',
+        # ]))
 
     @app.route('/level/save.html', methods=['POST'])
     def savemap():
@@ -74,27 +76,29 @@ def register_routes(app, mongo):
         except:
             return Response("Something went wrong!", 500)
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"user" : username, "sessionId": ObjectId(sessionId)})
-        except:
-            return Response("Invalid Session", 401)
+        return Response("Not Yet Implemented", 500)
 
-        if (user == None):
-            return Response("Invalid Session", 401)
+        # try:
+        #     users = mongo.db.users
+        #     user = users.find_one({"user" : username, "sessionId": ObjectId(sessionId)})
+        # except:
+        #     return Response("Invalid Session", 401)
 
-        try:
-            users.update_one({"_id": user["_id"]}, { "$set": { ("maps." + str(mapId)): {
-                "name": mapName,
-                "length": mapLength,
-                "data": mapData,
-                "createdAt": datetime.utcnow(),
-                "version" : version
-            } } })
-        except:
-            return Response("Failed to save data.", 500)
+        # if (user == None):
+        #     return Response("Invalid Session", 401)
 
-        return Response("ok")
+        # try:
+        #     users.update_one({"_id": user["_id"]}, { "$set": { ("maps." + str(mapId)): {
+        #         "name": mapName,
+        #         "length": mapLength,
+        #         "data": mapData,
+        #         "createdAt": datetime.utcnow(),
+        #         "version" : version
+        #     } } })
+        # except:
+        #     return Response("Failed to save data.", 500)
+
+        # return Response("ok")
 
     #classic
     @app.route('/level/load.html')
@@ -103,20 +107,22 @@ def register_routes(app, mongo):
         mapId = request.args['id']
         maps = None
 
-        try:
-            users = mongo.db.users
-            user = users.find_one({"user" : username})
-        except:
-            return Response("User not found.", 404)
+        return Response("Not Yet Implemented", 500)
 
-        if (user == None):
-            return Response("User not found.", 404)
+        # try:
+        #     users = mongo.db.users
+        #     user = users.find_one({"user" : username})
+        # except:
+        #     return Response("User not found.", 404)
 
-        if 'maps' in user:
-            maps = user['maps']
-        else:
-            return Response("Map not found.", 404)
+        # if (user == None):
+        #     return Response("User not found.", 404)
 
-        if mapId in maps:
-            response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + maps[mapId]['data'], mimetype='application/x-mine')
-            return response
+        # if 'maps' in user:
+        #     maps = user['maps']
+        # else:
+        #     return Response("Map not found.", 404)
+
+        # if mapId in maps:
+        #     response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + maps[mapId]['data'], mimetype='application/x-mine')
+        #     return response

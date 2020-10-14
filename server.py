@@ -21,8 +21,7 @@ import sys
 import glob
 from utils.servers import *
 from utils.versions import load_versions
-
-import routes.realms
+import routes
 
 # import config if present
 try: import config
@@ -52,13 +51,7 @@ app.config.update(dict(
 
 
 mongo = PyMongo(app)
-mongo.db.classicservers.create_indexes([
-    IndexModel([("realmId", ASCENDING)], unique = True, partialFilterExpression = { "realmId": {"$type": "number"}}),
-])
 mongo.db.serverjoins.create_index( "createdAt", expireAfterSeconds = 600 )
-mongo.db.users.create_index("user", unique = True )
-mongo.db.users.create_index("email", unique = True )
-mongo.db.featuredservers.create_index("realmId", unique = True, partialFilterExpression = { "realmId": {"$type": "number"} })
 
 load_versions()
 

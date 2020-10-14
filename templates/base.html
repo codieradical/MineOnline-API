@@ -9,7 +9,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="/res/style.css">
+    <link rel="stylesheet" type="text/css" href="/res/style2.css">
     <link rel="shortcut icon" href="/favicon.png"/>
 
     <title>MineOnline</title>
@@ -24,23 +24,12 @@
     <header id="toppanel">
       <img src="/img/mineonlinelogo.png" alt="MineOnline"/>
       <!-- <h1>MineOnline</h1> -->
-      <h2 id="subtitle">Minecraft API Reimplementation</h2>
       
       <div id="linksdiv">
         <span id="links">
           <a href="/" id="menu_" class="menuItem">Home</a>
-          &nbsp; &nbsp; <a href="/profile/" id="menu_profile" class="menuItem">Profile</a>
           &nbsp; &nbsp; <a href="/servers" class="menuItem">Server List</a><br>
         </span>
-
-        <span style="float: right;">
-          {% if user %}
-              Logged in as {{user.user}} | <a href="/logout" class="loginpanel">Log out</a>
-          {% else %}
-              <a href="/login" class="loginpanel">Log in</a> | <a href="/register" class="loginpanel">Register</a>
-          {% endif %}
-        </span>
-
       </div>
     </header>
     <div id="toppanel_bg" style="z-index: -1;left:0"></div>

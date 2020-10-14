@@ -11,182 +11,32 @@ import requests
 import base64
 
 def register_routes(app, mongo):
-    #Deletes a users cloak.
-    @app.route('/api/player/<uuid>/cloak', methods=["DELETE"])
-    @app.route('/mineonline/player/<uuid>/cloak', methods=["DELETE"])
-    @app.route('/api/player/<uuid>/cloak/delete')
-    @app.route('/mineonline/removecloak.jsp')
-    def removeCloak(uuid = None):
-        sessionId = request.args['sessionId']
-
-        if uuid != None:
-            uuid = str(UUID(uuid))
-
-        if sessionId:
-            try:
-                users = mongo.db.users
-                user = users.find_one({"sessionId": ObjectId(sessionId)})
-                if not user:
-                    return Response("Invalid session.", 400)
-                if uuid == None:
-                    uuid = user["uuid"]
-                users.update_one({ "_id": user["_id"], "uuid": uuid }, { "$set": { "cloak": "" } })
-                return Response("ok", 200)
-            except:
-                return Response("Something went wrong!", 500)
-
-        return Response("You must be logged in to do this.", 401)
-
     @app.route('/api/player/<uuid>/skin/metadata', methods=['GET'])
-    @app.route('/mineonline/player/<uuid>/skin/metadata', methods=['GET'])
-    def mineonlineskinmetadata(uuid):
+    def mojangskinmetadata(uuid):
         uuid = str(UUID(uuid))
-        try:
-            user = mongo.db.users.find_one({ "uuid": uuid })
-        except:
-            return abort(404)
-        if not user:
-            return abort(404)
-
-        return make_response(json.dumps({
-            "slim": user["slim"]
-        }))
-
-    @app.route('/api/player/<uuid>/skin/metadata', methods=['POST'])
-    @app.route('/mineonline/player/<uuid>/skin/metadata', methods=['POST'])
-    def mineonlineupdateskinmetadata(uuid):
-        sessionId = request.args['session']
-        if sessionId:
-            try:
-                users = mongo.db.users
-                user = users.find_one({"uuid" : uuid, "sessionId": ObjectId(sessionId)})
-            except:
-                return Response("Invalid Session", 401)
-        else:
-            return abort(401)
-
-        uuid = str(UUID(uuid))
-        try:
-            user = mongo.db.users.find_one({ "uuid": uuid })
-        except:
-            return abort(404)
-        if not user:
-            return abort(404)
-
-        updates = {}
-
-        if "slim" in request.json:
-            updates["slim"] = request.json["slim"]
-
-        users.update_one({ "_id": user["_id"] }, { "$set": updates })
-
-        return Response("ok")
-
-    @app.route('/api/player/<uuid>/skin', methods=['POST'])
-    @app.route('/mineonline/player/<uuid>/skin', methods=['POST'])
-    def saveskin(uuid):
-        uuid = str(UUID(uuid))
-        sessionId = None
-
-        user = None
-
-        try:
-            requestData = request.stream.read()
-
-            sessionId_length = int.from_bytes(requestData[1 : 2], byteorder='big')
-            sessionId = requestData[2 : 2 + sessionId_length]
-            skinLength = int.from_bytes(requestData[2 + sessionId_length + 2: 2 + sessionId_length + 2 + 4], byteorder='big')
-            skinData = requestData[2 + sessionId_length + 4 : len(requestData)]
-
-            sessionId = str(utf8m_to_utf8s(sessionId), 'utf-8')
-
-        except:
-            return Response("Something went wrong!", 500)
-
-        try:
-            users = mongo.db.users
-            user = users.find_one({"uuid" : uuid, "sessionId": ObjectId(sessionId)})
-        except:
-            return Response("Invalid Session", 401)
-
-        if (user == None):
-            return Response("Invalid Session", 401)
-
-        try:
-            skinBytes = BytesIO()
-            skinBytes.write(skinData)
-            skinBytes.flush()
-            skinBytes.seek(0)
-            skin = Image.open(skinBytes)
-            croppedSkin = BytesIO()
-            [width, height] = skin.size
-
-            if (width < 64 or height < 32):
-                return Response("Skin too small.", 400)
-            elif (height < 64):
-                skin = skin.crop((0, 0, 64, 32))
-            elif (height >= 64 or width > 64):
-                skin = skin.crop((0, 0, 64, 64))
-        
-            skin.save(croppedSkin, "PNG")
-            skinBytes.flush()
-            croppedSkin.seek(0)
-            users.update_one({ "_id": user["_id"] }, { "$set": { "skin": croppedSkin.read() } })
-        except:
-            return Response("Failed to upload skin.", 500)
-
-        return Response("ok")
-
-    #mineonline
-    @app.route('/api/player/<uuid>/cloak', methods=['POST'])
-    @app.route('/mineonline/player/<uuid>/cloak', methods=['POST'])
-    def savecloak(uuid):
-        uuid = str(UUID(uuid))
-        sessionId = None
-
-        user = None
-
-        try:
-            requestData = request.stream.read()
-
-            sessionId_length = int.from_bytes(requestData[1 : 2], byteorder='big')
-            sessionId = requestData[2 : 2 + sessionId_length]
-            cloakLength = int.from_bytes(requestData[2 + sessionId_length + 2: 2 + sessionId_length + 2 + 4], byteorder='big')
-            cloakData = requestData[2 + sessionId_length + 4 : len(requestData)]
-
-            sessionId = str(utf8m_to_utf8s(sessionId), 'utf-8')
-
-        except:
-            return Response("Something went wrong!", 500)
-
-        try:
-            users = mongo.db.users
-            user = users.find_one({"uuid" : uuid, "sessionId": ObjectId(sessionId)})
-        except:
-            return Response("Invalid Session", 401)
-
-        if (user == None):
-            return Response("Invalid Session", 401)
-
-        try:
-            cloakBytes = BytesIO()
-            cloakBytes.write(cloakData)
-            cloakBytes.flush()
-            cloakBytes.seek(0)
-            cloak = Image.open(cloakBytes)
-            croppedCloak = BytesIO()
-            cloak = cloak.crop((0, 0, 64, 32))
-            cloak.save(croppedCloak, "PNG")
-            cloakBytes.flush()
-            croppedCloak.seek(0)
-            users.update_one({ "_id": user["_id"] }, { "$set": { "cloak": croppedCloak.read() } })
-        except:
-            return Response("Failed to upload skin.", 500)
-
-        return Response("ok")
+        return abort(404)
 
     @app.route('/api/player/<uuid>/skin', methods=['GET'])
-    @app.route('/mineonline/player/<uuid>/skin', methods=['GET'])
+    def mojangskin(uuid):
+        try:
+            profile = json.loads(requests.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).content)
+            skinUrl = json.loads(base64.b64decode(profile["properties"][0]["value"]))["textures"]["SKIN"]["url"]
+            skinBytes = BytesIO(requests.get(skinUrl).content)
+            skinBytes.flush()
+            skinBytes.seek(0)
+
+            response = Response(skinBytes.read(), mimetype="image/png")
+            
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            response.headers['Cache-Control'] = 'public, max-age=0'
+
+            return response
+        except Exception as e:
+            return abort(404)
+
+    @app.route('/api/player/<uuid>/skin', methods=['GET'])
     def mineonlineskin(uuid):
         uuid = str(UUID(uuid))
         try:
@@ -290,7 +140,6 @@ def register_routes(app, mongo):
 
 
     @app.route('/api/player/<uuid>/skin/head', methods=['GET'])
-    @app.route('/mineonline/player/<uuid>/skin/head', methods=['GET'])
     def mineonlineskinhead(uuid):
         uuid = str(UUID(uuid))
         try:
@@ -326,22 +175,21 @@ def register_routes(app, mongo):
         return response
 
     @app.route('/api/player/<uuid>/cloak', methods=['GET'])
-    @app.route('/mineonline/player/<uuid>/cloak', methods=['GET'])
-    def mineonlinecloak(uuid):
-        uuid = str(UUID(uuid))
+    def mojangcloak(uuid):
         try:
-            user = mongo.db.users.find_one({ "uuid": uuid })
-        except:
+            profile = json.loads(requests.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).content)
+            skinUrl = json.loads(base64.b64decode(profile["properties"][0]["value"]))["textures"]["CLOAK"]["url"]
+            skinBytes = BytesIO(requests.get(skinUrl).content)
+            skinBytes.flush()
+            skinBytes.seek(0)
+
+            response = Response(skinBytes.read(), mimetype="image/png")
+            
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            response.headers['Cache-Control'] = 'public, max-age=0'
+
+            return response
+        except Exception as e:
             return abort(404)
-
-        if not user or not 'cloak' in user or not user['cloak']:
-            return abort(404)
-
-        response = Response(user['cloak'], mimetype="image/png")
-        
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
-        response.headers['Cache-Control'] = 'public, max-age=0'
-
-        return response

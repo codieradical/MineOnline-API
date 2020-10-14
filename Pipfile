@@ -15,6 +15,9 @@ flask-mail = "*"
 pillow = "*"
 flask-uuid = "*"
 requests = "*"
+werkzeug-contrib-fixers = "*"
+werkzeug = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.7"
