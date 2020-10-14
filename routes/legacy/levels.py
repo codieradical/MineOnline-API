@@ -19,27 +19,21 @@ def register_routes(app, mongo):
 
         return Response("Not Yet Implemented", 500)
 
-        # try:
-        #     users = mongo.db.users
-        #     user = users.find_one({"user" : username})
-        # except:
-        #     return Response("User not found.", 404)
+        try:
+            userworlds = mongo.db.userworlds.find_one({"username" : username})
+        except:
+            return Response("User not found.", 404)
 
-        # if (user == None):
-        #     return Response("User not found.", 404)
+        if (userworlds == None):
+            return Response("-;-;-;-;-")
 
-        # if 'maps' in user:
-        #     maps = user['maps']
-        # else:
-        #     return Response("-;-;-;-;-")
-
-        # return Response(';'.join([
-        #     maps['0']['name'] if '0' in maps else '-',
-        #     maps['1']['name'] if '1' in maps else '-',
-        #     maps['2']['name'] if '2' in maps else '-',
-        #     maps['3']['name'] if '3' in maps else '-',
-        #     maps['4']['name'] if '4' in maps else '-',
-        # ]))
+        return Response(';'.join([
+            userworlds['0']['name'] if '0' in userworlds else '-',
+            userworlds['1']['name'] if '1' in userworlds else '-',
+            userworlds['2']['name'] if '2' in userworlds else '-',
+            userworlds['3']['name'] if '3' in userworlds else '-',
+            userworlds['4']['name'] if '4' in userworlds else '-',
+        ]))
 
     @app.route('/level/save.html', methods=['POST'])
     def savemap():
@@ -76,29 +70,35 @@ def register_routes(app, mongo):
         except:
             return Response("Something went wrong!", 500)
 
-        return Response("Not Yet Implemented", 500)
+        userworlds = mongo.db.userworlds.find_one({"username" : username, "sessionId": ObjectId(sessionId)})
 
-        # try:
-        #     users = mongo.db.users
-        #     user = users.find_one({"user" : username, "sessionId": ObjectId(sessionId)})
-        # except:
-        #     return Response("Invalid Session", 401)
+        if (userworlds == None):
+            try:
+                mongo.db.userworlds.insert_one({
+                    "username": username,
+                    (str(mapId)): {
+                        "name": mapName,
+                        "length": mapLength,
+                        "data": mapData,
+                        "createdAt": datetime.utcnow(),
+                        "version" : version
+                    }
+                })
+            except:
+                return Response("Failed to save data.", 500)
+        else:
+            try:
+                mongo.db.userworlds.update_one({"_id": userworlds["_id"]}, { "$set": { (str(mapId)): {
+                    "name": mapName,
+                    "length": mapLength,
+                    "data": mapData,
+                    "createdAt": datetime.utcnow(),
+                    "version" : version
+                } } })
+            except:
+                return Response("Failed to save data.", 500)
 
-        # if (user == None):
-        #     return Response("Invalid Session", 401)
-
-        # try:
-        #     users.update_one({"_id": user["_id"]}, { "$set": { ("maps." + str(mapId)): {
-        #         "name": mapName,
-        #         "length": mapLength,
-        #         "data": mapData,
-        #         "createdAt": datetime.utcnow(),
-        #         "version" : version
-        #     } } })
-        # except:
-        #     return Response("Failed to save data.", 500)
-
-        # return Response("ok")
+        return Response("ok")
 
     #classic
     @app.route('/level/load.html')
@@ -107,22 +107,13 @@ def register_routes(app, mongo):
         mapId = request.args['id']
         maps = None
 
-        return Response("Not Yet Implemented", 500)
+        try:
+            userworlds = mongo.db.userworlds.find_one({"username" : username})
+        except:
+            return Response("User not found.", 404)
 
-        # try:
-        #     users = mongo.db.users
-        #     user = users.find_one({"user" : username})
-        # except:
-        #     return Response("User not found.", 404)
+        if mapId in userworlds:
+            response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + maps[mapId]['data'], mimetype='application/x-mine')
+            return response
 
-        # if (user == None):
-        #     return Response("User not found.", 404)
-
-        # if 'maps' in user:
-        #     maps = user['maps']
-        # else:
-        #     return Response("Map not found.", 404)
-
-        # if mapId in maps:
-        #     response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + maps[mapId]['data'], mimetype='application/x-mine')
-        #     return response
+        return Response("Map not found.", 404)
