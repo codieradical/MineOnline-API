@@ -16,7 +16,6 @@ def register_routes(app, mongo):
     register_skins_routes(app, mongo)
     register_servers_routes(app, mongo)
     register_worlds_routes(app, mongo)
-    register_mojang_routes(app, mongo)
 
     @app.route('/api/getmyip')
     def ipaddress():
@@ -43,3 +42,8 @@ def register_routes(app, mongo):
         res = make_response(json.dumps(indexJson))
         res.mimetype = 'application/json'
         return res
+
+    # Used when joining a server to get a response the game will recognize.
+    @app.route('/api/ok')
+    def stubok():
+        return Response("ok")
