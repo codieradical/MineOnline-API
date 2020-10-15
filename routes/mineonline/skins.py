@@ -14,7 +14,17 @@ def register_routes(app, mongo):
     @app.route('/api/player/<uuid>/skin/metadata', methods=['GET'])
     def mojangskinmetadata(uuid):
         uuid = str(UUID(uuid))
-        return abort(404)
+        try:
+            profile = json.loads(requests.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).content)
+            slim = json.loads(base64.b64decode(profile["properties"][0]["value"]))["textures"]["SKIN"]["metadata"]["model"] == "slim"
+            return make_response(json.dumps({
+                "slim": slim
+            }))
+        except:
+            pass
+        return make_response(json.dumps({
+            "slim": True
+        }))
 
     @app.route('/api/player/<uuid>/skin', methods=['GET'])
     def mojangskin(uuid):
