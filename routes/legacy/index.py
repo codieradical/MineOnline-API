@@ -2,14 +2,10 @@ from flask import request, send_file, Response
 from datetime import datetime, timedelta, timezone
 from bson.objectid import ObjectId
 
-from routes.legacy.skins import register_routes as register_skins_routes
-from routes.legacy.server_auth import register_routes as register_server_auth_routes
 from routes.legacy.levels import register_routes as register_levels_routes
 from routes.legacy.website import register_routes as register_website_routes
 
 def register_routes(app, mongo):
-    register_skins_routes(app, mongo)
-    register_server_auth_routes(app, mongo)
     register_levels_routes(app, mongo)
     register_website_routes(app, mongo)
 
