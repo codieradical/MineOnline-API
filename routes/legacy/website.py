@@ -27,10 +27,6 @@ def register_routes(app, mongo):
     def index():
         return serve("index")
 
-    @app.route('/profile/')
-    def profile():
-        return serve("profile")
-
     @app.route('/servers')
     def classicservers():
         # if not request.is_secure:
