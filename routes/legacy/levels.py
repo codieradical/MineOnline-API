@@ -17,8 +17,6 @@ def register_routes(app, mongo):
         username = request.args['user']
         maps = None
 
-        return Response("Not Yet Implemented", 500)
-
         try:
             userworlds = mongo.db.userworlds.find_one({"username" : username})
         except:
@@ -53,7 +51,7 @@ def register_routes(app, mongo):
 
             username_length = int.from_bytes(requestData[1 : 2], byteorder='big')
             username = requestData[2 : 2 + username_length]
-            sessionId_length = int.from_bytes(requestData[2 + username_length + 1 : 2 + username_length + 2], byteorder='big')
+            sessionId_length = int.from_bytes(requestData[2 + username_length + 0 : 2 + username_length + 2], byteorder='big')
             sessionId = requestData[2 + username_length + 2 : 2 + username_length + 2 + sessionId_length]
             mapName_length = int.from_bytes(requestData[2 + username_length + 2 + sessionId_length + 1 : 2 + username_length + 2 + sessionId_length + 2], byteorder='big')
             mapName = requestData[2 + username_length + 2 + sessionId_length + 2 : 2 + username_length + 2 + sessionId_length + 2 + mapName_length]
@@ -70,7 +68,7 @@ def register_routes(app, mongo):
         except:
             return Response("Something went wrong!", 500)
 
-        userworlds = mongo.db.userworlds.find_one({"username" : username, "sessionId": ObjectId(sessionId)})
+        userworlds = mongo.db.userworlds.find_one({"username" : username})
 
         if (userworlds == None):
             try:
@@ -105,7 +103,6 @@ def register_routes(app, mongo):
     def loadmap():
         username = request.args['user']
         mapId = request.args['id']
-        maps = None
 
         try:
             userworlds = mongo.db.userworlds.find_one({"username" : username})
@@ -113,7 +110,7 @@ def register_routes(app, mongo):
             return Response("User not found.", 404)
 
         if mapId in userworlds:
-            response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + maps[mapId]['data'], mimetype='application/x-mine')
+            response = Response(bytes([0x00, 0x02, 0x6F, 0x6B]) + userworlds[mapId]['data'], mimetype='application/x-mine')
             return response
 
         return Response("Map not found.", 404)
