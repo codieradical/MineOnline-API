@@ -42,8 +42,3 @@ def register_routes(app, mongo):
         res = make_response(json.dumps(indexJson))
         res.mimetype = 'application/json'
         return res
-
-    # Used when joining a server to get a response the game will recognize.
-    @app.route('/api/ok')
-    def stubok():
-        return Response("ok")
