@@ -11,6 +11,15 @@ import requests
 import base64
 
 def register_routes(app, mongo):
+    @app.route('/api/player/<uuid>/customcape', methods=['GET'])
+    def customcloak(uuid):
+        try:
+            # Fetch from minecraftcapes
+            profile = json.loads(requests.get("https://minecraftcapes.net/profile/" + uuid).content)
+            return Response(base64.b64decode(profile["textures"]["cape"]))
+        except Exception as e:
+            return abort(404)
+    
     @app.route('/api/playerhead', methods=['GET'])
     def playerHead():
         if not "user" in request.args:
