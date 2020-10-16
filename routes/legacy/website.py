@@ -29,8 +29,8 @@ def register_routes(app, mongo):
 
     @app.route('/servers')
     def classicservers():
-        # if not request.is_secure:
-        #     return redirect(request.url.replace('http://', 'https://'))
+        if not request.is_secure:
+            return redirect(request.url.replace('http://', 'https://'))
 
         mineOnlineServers = getclassicservers(mongo)
         featuredServers = list(mongo.db.featuredservers.find())
