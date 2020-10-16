@@ -22,6 +22,17 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.')[-1].lower() in ALLOWED_EXTENSIONS
 
+def filterClassicServers(x):
+    return x['versionName'].lower()[0] == 'c'
+def filterIndevServers(x):
+    return x['versionName'].lower()[0] == 'i'
+def filterAlphaServers(x):
+    return x['versionName'].lower()[0] == 'a'
+def filterBetaServers(x):
+    return x['versionName'].lower()[0] == 'b'
+def filterOtherServers(x):
+    return x['versionName'].lower()[0] != 'c' and x['versionName'].lower()[0] != 'i' and x['versionName'].lower()[0] != 'a' and x['versionName'].lower()[0] != 'b'
+
 def register_routes(app, mongo):
     @app.route('/')
     def index():
@@ -83,9 +94,21 @@ def register_routes(app, mongo):
         servers = list(filter(filterServer, servers))
         serverCount = len(servers)
 
+        classicServers = list(filter(filterClassicServers, servers))
+        indevServers = list(filter(filterIndevServers, servers))
+        alphaServers = list(filter(filterAlphaServers, servers))
+        betaServers = list(filter(filterBetaServers, servers))
+        # releaseServers = list(filter(filterReleaseServers, servers))
+        otherServers = list(filter(filterOtherServers, servers))
+
+
 
         return render_template("public/servers.html", 
-            servers=servers,
+            classicServers=classicServers,
+            indevServers=indevServers,
+            alphaServers=alphaServers,
+            betaServers=betaServers,
+            otherServers=otherServers,
             serverCount=serverCount,
             usersCount=usersCount,
             privateCount=privateCount,

@@ -8,10 +8,10 @@
 
 <h2>Public servers</h2>
 <p>
-List was updated {{timeString}}.<br/><br/>
+<!-- List was updated {{timeString}}.<br/><br/> -->
 <p>There are currently {{serverCount}} servers online.</p>
 </p>
-<br>
+<!-- <br> -->
 
 <!--
 	Status Types
@@ -24,14 +24,62 @@ List was updated {{timeString}}.<br/><br/>
 	NONE
  -->
 
-{% if serverCount > 1 %}
-	{% for server in servers %}
+ <h3>Beta</h3>
+ {% if betaServers|length > 0 %}
+	 {% for server in betaServers %}
+		 {% if 'md5' in server %}
+			 <hr/>
+			 {% if 'isMineOnline' in server and server['isMineOnline'] == False %}
+				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+			 {% else %}
+				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			 {% endif %}
+ 
+			 {% if server["status"] == "OFFLINEMODE" %}
+			 <span style="color: #AA0000">Offline Mode</span><br/>
+			 {% elif server["status"] == "WHITELISTED" %}
+			 <span>Whitelisted</span><br/>
+			 {% elif server["status"] == "ON_THE_WHITELIST" %}
+			 <span style="color: #00AA00">Whitelisted</span><br/>
+			 {% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
+			 <span style="color: #AA0000">You're not Whitelisted</span><br/>
+			 {% elif server["status"] == "BANNED" %}
+			 <span style="color: #AA0000">Banned</span><br/>
+			 {% else %}
+			 <br/>
+			 {% endif %}
+ 
+			 {% if 'players' in server and server['players'] |length > 0 %}
+			  <span>Players: 
+				 {% for player in server['players'] %}
+				 <span style="display: inline-block;">
+					 <img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+					 {{player|striptags}}
+				 </span>
+				 {% endfor %}
+			 </span>
+			 <br/>
+			 {% endif %}
+			 {% if server['ip'] %}
+			 <span>
+				 IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				 <br/>
+			 </span>
+			 {% endif %}
+		 {% endif %}
+	 {% endfor %}
+	 <br/>
+	 {% endif %}
+
+ <h3>Alpha</h3>
+{% if alphaServers|length > 0 %}
+	{% for server in alphaServers %}
 		{% if 'md5' in server %}
 			<hr/>
 			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				<b>{{server['name']}}</b> - {{server['versionName'] or "Unknown Version"}} - Featured Server
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
 			{% else %}
-				<b>{{server['name']}}</b> - {{server['versionName'] or "Unknown Version"}} - {{server['users']}}/{{server['maxUsers']}}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
 			{% if server["status"] == "OFFLINEMODE" %}
@@ -52,8 +100,8 @@ List was updated {{timeString}}.<br/><br/>
  			<span>Players: 
 				{% for player in server['players'] %}
 				<span style="display: inline-block;">
-					<img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player}}">
-					{{player}}
+					<img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+					{{player|striptags}}
 				</span>
 				{% endfor %}
 			</span>
@@ -61,14 +109,156 @@ List was updated {{timeString}}.<br/><br/>
 			{% endif %}
 			{% if server['ip'] %}
 			<span>
-				IP: <b>{{server['ip']}}{% if server['port'] != "25565" %}:{{server['port']}}{% endif %}</b>
+				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				<br/>
 			</span>
 			{% endif %}
 		{% endif %}
 	{% endfor %}
-	<br/><br/>
+	<br/>
+{% endif %}
+
+<h3>Classic</h3>
+{% if classicServers|length > 0 %}
+	{% for server in classicServers %}
+		{% if 'md5' in server %}
+			<hr/>
+			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+			{% else %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			{% endif %}
+
+			{% if server["status"] == "OFFLINEMODE" %}
+			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% elif server["status"] == "WHITELISTED" %}
+			<span>Whitelisted</span><br/>
+			{% elif server["status"] == "ON_THE_WHITELIST" %}
+			<span style="color: #00AA00">Whitelisted</span><br/>
+			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
+			<span style="color: #AA0000">You're not Whitelisted</span><br/>
+			{% elif server["status"] == "BANNED" %}
+			<span style="color: #AA0000">Banned</span><br/>
+			{% else %}
+			<br/>
+			{% endif %}
+
+			{% if 'players' in server and server['players'] |length > 0 %}
+ 			<span>Players: 
+				{% for player in server['players'] %}
+				<span style="display: inline-block;">
+					<img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+					{{player|striptags}}
+				</span>
+				{% endfor %}
+			</span>
+			<br/>
+			{% endif %}
+			{% if server['ip'] %}
+			<span>
+				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<br/>
+{% endif %}
+
+<h3>Indef / Infdev</h3>
+{% if indevServers|length > 0 %}
+	{% for server in indevServers %}
+		{% if 'md5' in server %}
+			<hr/>
+			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+			{% else %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			{% endif %}
+
+			{% if server["status"] == "OFFLINEMODE" %}
+			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% elif server["status"] == "WHITELISTED" %}
+			<span>Whitelisted</span><br/>
+			{% elif server["status"] == "ON_THE_WHITELIST" %}
+			<span style="color: #00AA00">Whitelisted</span><br/>
+			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
+			<span style="color: #AA0000">You're not Whitelisted</span><br/>
+			{% elif server["status"] == "BANNED" %}
+			<span style="color: #AA0000">Banned</span><br/>
+			{% else %}
+			<br/>
+			{% endif %}
+
+			{% if 'players' in server and server['players'] |length > 0 %}
+ 			<span>Players: 
+				{% for player in server['players'] %}
+				<span style="display: inline-block;">
+					<img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+					{{player|striptags}}
+				</span>
+				{% endfor %}
+			</span>
+			<br/>
+			{% endif %}
+			{% if server['ip'] %}
+			<span>
+				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<br/>
+{% endif %}
+
+<h3>Release / Other</h3>
+{% if otherServers|length > 0 %}
+	{% for server in otherServers %}
+		{% if 'md5' in server %}
+			<hr/>
+			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+			{% else %}
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			{% endif %}
+
+			{% if server["status"] == "OFFLINEMODE" %}
+			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% elif server["status"] == "WHITELISTED" %}
+			<span>Whitelisted</span><br/>
+			{% elif server["status"] == "ON_THE_WHITELIST" %}
+			<span style="color: #00AA00">Whitelisted</span><br/>
+			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
+			<span style="color: #AA0000">You're not Whitelisted</span><br/>
+			{% elif server["status"] == "BANNED" %}
+			<span style="color: #AA0000">Banned</span><br/>
+			{% else %}
+			<br/>
+			{% endif %}
+
+			{% if 'players' in server and server['players'] |length > 0 %}
+ 			<span>Players: 
+				{% for player in server['players'] %}
+				<span style="display: inline-block;">
+					<img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+					{{player|striptags}}
+				</span>
+				{% endfor %}
+			</span>
+			<br/>
+			{% endif %}
+			{% if server['ip'] %}
+			<span>
+				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<br/>
 {% endif %}
 <br/>
+
 </div>
 {% endblock %}
