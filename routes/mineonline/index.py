@@ -7,7 +7,6 @@ from uuid import uuid4, UUID
 from routes.mineonline.skins import register_routes as register_skins_routes
 from routes.mineonline.servers import register_routes as register_servers_routes
 from routes.mineonline.worlds import register_routes as register_worlds_routes
-from routes.mineonline.mojang import register_routes as register_mojang_routes
 import os
 import bcrypt
 
