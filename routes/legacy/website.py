@@ -69,8 +69,8 @@ def register_routes(app, mongo):
 
             status = NONE
 
-            if (x["onlinemode"] == False):
-                status = OFFLINEMODE
+            if (x["onlinemode"] == True or x["onlinemode"] == "true"):
+                status = ONLINEMODE
             
             if (x["whitelisted"] == True and "whitelistUsers" in x and "whitelistIPs" in x):
                 status = WHITELISTED

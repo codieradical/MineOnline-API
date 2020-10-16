@@ -19,7 +19,7 @@
 	WHITELISTED
 	ON_THE_WHITELIST
 	BANNED
-	OFFLINEMODE
+	ONLINEMODE
 	NOT_ON_THE_WHITELIST
 	NONE
  -->
@@ -30,13 +30,13 @@
 		 {% if 'md5' in server %}
 			 <hr/>
 			 {% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			 {% else %}
 				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			 {% endif %}
  
-			 {% if server["status"] == "OFFLINEMODE" %}
-			 <span style="color: #AA0000">Offline Mode</span><br/>
+			 {% if server["status"] == "ONLINEMODE" %}
+			 <span style="color: #00AA00">Online Mode</span><br/>
 			 {% elif server["status"] == "WHITELISTED" %}
 			 <span>Whitelisted</span><br/>
 			 {% elif server["status"] == "ON_THE_WHITELIST" %}
@@ -77,13 +77,13 @@
 		{% if 'md5' in server %}
 			<hr/>
 			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "OFFLINEMODE" %}
-			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% if server["status"] == "ONLINEMODE" %}
+			<span style="color: #00AA00">Online Mode</span><br/>
 			{% elif server["status"] == "WHITELISTED" %}
 			<span>Whitelisted</span><br/>
 			{% elif server["status"] == "ON_THE_WHITELIST" %}
@@ -124,13 +124,13 @@
 		{% if 'md5' in server %}
 			<hr/>
 			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "OFFLINEMODE" %}
-			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% if server["status"] == "ONLINEMODE" %}
+			<span style="color: #00AA00">Online Mode</span><br/>
 			{% elif server["status"] == "WHITELISTED" %}
 			<span>Whitelisted</span><br/>
 			{% elif server["status"] == "ON_THE_WHITELIST" %}
@@ -171,13 +171,13 @@
 		{% if 'md5' in server %}
 			<hr/>
 			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "OFFLINEMODE" %}
-			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% if server["status"] == "ONLINEMODE" %}
+			<span style="color: #00AA00">Online Mode</span><br/>
 			{% elif server["status"] == "WHITELISTED" %}
 			<span>Whitelisted</span><br/>
 			{% elif server["status"] == "ON_THE_WHITELIST" %}
@@ -218,13 +218,13 @@
 		{% if 'md5' in server %}
 			<hr/>
 			{% if 'isMineOnline' in server and server['isMineOnline'] == False %}
-				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - Featured Server
+				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "OFFLINEMODE" %}
-			<span style="color: #AA0000">Offline Mode</span><br/>
+			{% if server["status"] == "ONLINEMODE" %}
+			<span style="color: #00AA00">Online Mode</span><br/>
 			{% elif server["status"] == "WHITELISTED" %}
 			<span>Whitelisted</span><br/>
 			{% elif server["status"] == "ON_THE_WHITELIST" %}
