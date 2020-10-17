@@ -264,7 +264,7 @@ def register_routes(app, mongo):
             return Response("Server not found.", 404)
 
         if server:
-            if "salt" in server:
+            if "salt" in server and server['salt'] != None:
                 mppass = str(hashlib.md5((server['salt'] + username).encode('utf-8')).hexdigest())
                 return Response(mppass)
             else:
