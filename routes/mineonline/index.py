@@ -41,3 +41,11 @@ def register_routes(app, mongo):
         res = make_response(json.dumps(indexJson))
         res.mimetype = 'application/json'
         return res
+
+    @app.route('/api/login', methods = ["POST"])
+    def apilogin():
+        res = make_response(json.dumps({
+            "error": "MineOnline Update Required"
+        }))
+        res.mimetype = 'application/json'
+        return res
