@@ -51,12 +51,12 @@ def register_routes(app, mongo):
 
             username_length = int.from_bytes(requestData[1 : 2], byteorder='big')
             username = requestData[2 : 2 + username_length]
-            sessionId_length = int.from_bytes(requestData[2 + username_length + 0 : 2 + username_length + 2], byteorder='big')
+            sessionId_length = int.from_bytes(requestData[2 + username_length : 2 + username_length + 2], byteorder='big')
             sessionId = requestData[2 + username_length + 2 : 2 + username_length + 2 + sessionId_length]
-            mapName_length = int.from_bytes(requestData[2 + username_length + 2 + sessionId_length + 1 : 2 + username_length + 2 + sessionId_length + 2], byteorder='big')
+            mapName_length = int.from_bytes(requestData[2 + username_length + 2 + sessionId_length : 2 + username_length + 2 + sessionId_length + 2], byteorder='big')
             mapName = requestData[2 + username_length + 2 + sessionId_length + 2 : 2 + username_length + 2 + sessionId_length + 2 + mapName_length]
             mapId = requestData[2 + username_length + 2 + sessionId_length + 2 + mapName_length]
-            mapLength = int.from_bytes(requestData[2 + username_length + 2 + sessionId_length + 2 + mapName_length + 1 : 2 + username_length + 2 + sessionId_length + 2 + mapName_length + 1 + 4], byteorder='big')
+            mapLength = int.from_bytes(requestData[2 + username_length + 2 + sessionId_length + 2 + mapName_length : 2 + username_length + 2 + sessionId_length + 2 + mapName_length + 1 + 4], byteorder='big')
             mapData = requestData[2 + username_length + 2 + sessionId_length + 2 + mapName_length + 1 + 4 : len(requestData)]
 
             username = str(utf8m_to_utf8s(username), 'utf-8')

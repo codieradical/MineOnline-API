@@ -38,6 +38,10 @@ def register_routes(app, mongo):
     def index():
         return serve("index")
 
+    @app.route('/servers.jsp')
+    def serversredirect():
+        return redirect("/servers")
+
     @app.route('/servers')
     def classicservers():
         if not request.is_secure:
@@ -71,7 +75,7 @@ def register_routes(app, mongo):
 
             if (x["onlinemode"] == True or x["onlinemode"] == "true"):
                 status = ONLINEMODE
-            
+
             if (x["whitelisted"] == True and "whitelistUsers" in x and "whitelistIPs" in x):
                 status = WHITELISTED
 
