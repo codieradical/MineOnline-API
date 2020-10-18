@@ -1,2 +1,2 @@
 def filterServer(x):
-    return x != None
+    return x != None and "name" in x
