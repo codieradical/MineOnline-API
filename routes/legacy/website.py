@@ -38,6 +38,10 @@ def register_routes(app, mongo):
     def index():
         return serve("index")
 
+    @app.route('/download')
+    def download():
+        return redirect("https://github.com/codieradical/MineOnline/releases/latest", 302)
+
     @app.route('/servers.jsp')
     def serversredirect():
         return redirect("/servers")
