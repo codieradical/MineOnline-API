@@ -38,7 +38,7 @@ def register_routes(app, mongo):
         port = request.json['port']
         maxUsers = request.json['max']
         name = request.json['name']
-        onlinemode = request.json['onlinemode'].lower() == "true"
+        onlinemode = request.json['onlinemode']
         md5 = request.json['md5']
         whitelisted = request.json['whitelisted']
         uuid = str(uuid4())
