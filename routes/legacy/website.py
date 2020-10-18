@@ -71,25 +71,16 @@ def register_routes(app, mongo):
             if ("public" in x and x["public"] == False):
                 return
 
-            status = NONE
-
-            if (x["onlinemode"] == True or x["onlinemode"] == "true"):
-                status = ONLINEMODE
-
-            if (x["whitelisted"] == True and "whitelistUsers" in x and "whitelistIPs" in x):
-                status = WHITELISTED
-
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
-                "ip": x["ip"] if status != BANNED and status != NOT_ON_THE_WHITELIST else None,
-                "port": x["port"] if status != BANNED and status != NOT_ON_THE_WHITELIST else None,
+                "ip": x["ip"],
+                "port": x["port"],
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
                 "name": x["name"],
                 "onlinemode": x["onlinemode"],
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
-                "status": status,
                 "versionName": x["versionName"] if "versionName" in x else None,
                 "players": x["players"] if "players" in x else []
             }

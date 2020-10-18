@@ -38,15 +38,9 @@ def register_routes(app, mongo):
         port = request.json['port']
         maxUsers = request.json['max']
         name = request.json['name']
-        onlinemode = request.json['onlinemode']
+        onlinemode = request.json['onlinemode'].lower() == "true"
         md5 = request.json['md5']
         whitelisted = request.json['whitelisted']
-        whitelistUsers = request.json['whitelistUsers']
-        whitelistIPs = request.json['whitelistIPs']
-        whitelistUUIDs = request.json['whitelistUUIDs']
-        bannedUsers = request.json['bannedUsers']
-        bannedIPs = request.json['bannedIPs']
-        bannedUUIDs = request.json['bannedUUIDs']
         uuid = str(uuid4())
 
         players = []
@@ -62,17 +56,6 @@ def register_routes(app, mongo):
 
         if ip == "127.0.0.1":
             return Response("Can't list local servers.", 400)
-
-        owner = None
-        ownerUUID = None
-
-        if "owner" in request.json and request.json["owner"] != "":
-            owner = request.json["owner"]
-            try:
-                users = mongo.db.users
-                ownerUUID = users.find_one({"user": request.json["owner"]})["uuid"]
-            except:
-                pass
 
         classicservers = mongo.db.classicservers
 
@@ -116,12 +99,6 @@ def register_routes(app, mongo):
                     "versionName": versionName,
                     "md5": md5,
                     "whitelisted": whitelisted,
-                    "whitelistUsers": whitelistUsers,
-                    "whitelistIPs": whitelistIPs,
-                    "whitelistUUIDs": whitelistUUIDs,
-                    "bannedUsers": bannedUsers,
-                    "bannedIPs": bannedIPs,
-                    "bannedUUIDs": bannedUUIDs,
                     "players": players,
                     "uuid": uuid
                 })
@@ -170,32 +147,16 @@ def register_routes(app, mongo):
             if ("public" in x and x["public"] == False):
                 return
 
-            status = NONE
-
-            if (x["onlinemode"] == True or x["onlinemode"] == "true"):
-                status = ONLINEMODE
-
-            if not user == None:
-                if (x["whitelisted"] == True and "whitelistUsers" in x and "whitelistIPs" in x and "whitelistUUIDs" in x):
-                    if(user["user"] in x["whitelistUsers"] or request.remote_addr in x["whitelistIPs"]):
-                        status = ON_THE_WHITELIST
-                    else:
-                        status = NOT_ON_THE_WHITELIST
-
-                if ("bannedUsers" in x and "bannedIPs" in x and "bannedUUIDs" in x and (user["user"] in x["bannedUsers"] or request.remote_addr in x["bannedIPs"] or user["uuid"] in x["bannedUUIDs"])):
-                    status = BANNED
-
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
-                "ip": x["ip"] if status != BANNED and status != NOT_ON_THE_WHITELIST else None,
-                "port": x["port"] if status != BANNED and status != NOT_ON_THE_WHITELIST else None,
+                "ip": x["ip"],
+                "port": x["port"],
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
                 "name": x["name"],
                 "onlinemode": x["onlinemode"],
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
-                "status": status,
                 "players": x["players"] if "players" in x else []
             }
 

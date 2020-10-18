@@ -13,18 +13,6 @@
 <a href="/serverhosting">How to list your server / use online mode.</a>
 
 </p>
-<!-- <br> -->
-
-<!--
-	Status Types
-
-	WHITELISTED
-	ON_THE_WHITELIST
-	BANNED
-	ONLINEMODE
-	NOT_ON_THE_WHITELIST
-	NONE
- -->
 
  <h3>Beta</h3>
  {% if betaServers|length > 0 %}
@@ -37,19 +25,10 @@
 				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			 {% endif %}
  
-			 {% if server["status"] == "ONLINEMODE" %}
-			 <span style="color: #00AA00">Online Mode</span><br/>
-			 {% elif server["status"] == "WHITELISTED" %}
-			 <span>Whitelisted</span><br/>
-			 {% elif server["status"] == "ON_THE_WHITELIST" %}
-			 <span style="color: #00AA00">Whitelisted</span><br/>
-			 {% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
-			 <span style="color: #AA0000">You're not Whitelisted</span><br/>
-			 {% elif server["status"] == "BANNED" %}
-			 <span style="color: #AA0000">Banned</span><br/>
-			 {% else %}
-			 <br/>
+			 {% if server["onlinemode"] %}
+			 <span style="color: #00AA00">Online Mode</span>
 			 {% endif %}
+			 <br/>
  
 			 {% if 'players' in server and server['players'] |length > 0 %}
 			  <span>Players: 
@@ -84,19 +63,10 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "ONLINEMODE" %}
-			<span style="color: #00AA00">Online Mode</span><br/>
-			{% elif server["status"] == "WHITELISTED" %}
-			<span>Whitelisted</span><br/>
-			{% elif server["status"] == "ON_THE_WHITELIST" %}
-			<span style="color: #00AA00">Whitelisted</span><br/>
-			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
-			<span style="color: #AA0000">You're not Whitelisted</span><br/>
-			{% elif server["status"] == "BANNED" %}
-			<span style="color: #AA0000">Banned</span><br/>
-			{% else %}
-			<br/>
+			{% if server["onlinemode"] %}
+			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
+			<br/>
 
 			{% if 'players' in server and server['players'] |length > 0 %}
  			<span>Players: 
@@ -131,19 +101,10 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "ONLINEMODE" %}
-			<span style="color: #00AA00">Online Mode</span><br/>
-			{% elif server["status"] == "WHITELISTED" %}
-			<span>Whitelisted</span><br/>
-			{% elif server["status"] == "ON_THE_WHITELIST" %}
-			<span style="color: #00AA00">Whitelisted</span><br/>
-			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
-			<span style="color: #AA0000">You're not Whitelisted</span><br/>
-			{% elif server["status"] == "BANNED" %}
-			<span style="color: #AA0000">Banned</span><br/>
-			{% else %}
-			<br/>
+			{% if server["onlinemode"] %}
+			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
+			<br/>
 
 			{% if 'players' in server and server['players'] |length > 0 %}
  			<span>Players: 
@@ -178,19 +139,10 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "ONLINEMODE" %}
-			<span style="color: #00AA00">Online Mode</span><br/>
-			{% elif server["status"] == "WHITELISTED" %}
-			<span>Whitelisted</span><br/>
-			{% elif server["status"] == "ON_THE_WHITELIST" %}
-			<span style="color: #00AA00">Whitelisted</span><br/>
-			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
-			<span style="color: #AA0000">You're not Whitelisted</span><br/>
-			{% elif server["status"] == "BANNED" %}
-			<span style="color: #AA0000">Banned</span><br/>
-			{% else %}
-			<br/>
+			{% if server["onlinemode"] %}
+			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
+			<br/>
 
 			{% if 'players' in server and server['players'] |length > 0 %}
  			<span>Players: 
@@ -225,19 +177,10 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["status"] == "ONLINEMODE" %}
-			<span style="color: #00AA00">Online Mode</span><br/>
-			{% elif server["status"] == "WHITELISTED" %}
-			<span>Whitelisted</span><br/>
-			{% elif server["status"] == "ON_THE_WHITELIST" %}
-			<span style="color: #00AA00">Whitelisted</span><br/>
-			{% elif server["status"] == "NOT_ON_THE_WHITELIST" %}
-			<span style="color: #AA0000">You're not Whitelisted</span><br/>
-			{% elif server["status"] == "BANNED" %}
-			<span style="color: #AA0000">Banned</span><br/>
-			{% else %}
-			<br/>
+			{% if server["onlinemode"] %}
+			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
+			<br/>
 
 			{% if 'players' in server and server['players'] |length > 0 %}
  			<span>Players: 
