@@ -119,20 +119,6 @@ def register_routes(app, mongo):
 
     @app.route("/api/servers", methods=["GET"])
     def listservers():
-        username = request.args.get('username')
-        uuid = request.args.get('uuid')
-
-        user = {
-            "user": None,
-            "uuid": None
-        }
-
-        if "username" in request.args or "uuid" in request.args:
-            user = {
-                "user": username,
-                "uuid": uuid
-            }
-
         mineOnlineServers = getclassicservers(mongo)
         featuredServers = list(mongo.db.featuredservers.find())
         featuredServers = [dict(server, **{'isMineOnline': False}) for server in featuredServers]
