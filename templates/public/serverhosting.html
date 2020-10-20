@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Hosting{% endblock %}
+
 {% block content %}
 
 <h1>Hosting Servers</h1>
@@ -12,7 +14,7 @@
     There are modded servers out there capable of running in online-mode, these are compatible with Mine Online.
     <br/><br/>
     The easiest way to host a server in online-mode is to host it through Mine Online using this command:
-    <code>java -jar MineOnline.jar (server.jar) [launch arguments]</code>
+    <code>java -cp MineOnline.jar gg.codie.mineonline.Server (server.jar) [launch arguments]</code>
     <br/>
     It's that simple, when you host a server through Mine Online, you can set online-mode or verify-names in the sever.properties file to true, and players using Mine Online or online-mode mods will be able to join.
 </p>
