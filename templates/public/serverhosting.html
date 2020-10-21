@@ -30,6 +30,12 @@
             If you host any server through mine online, from c0.0.15a to release 1.16 (or whatever the latest version is 😛), by default it will be added to the server list.
             <br/>
             You can opt-out of this by setting public to false in the server properties file.
+            <br/><br/>
+            If you're hosting a non-vanilla server (like bukkit, hmod), you'll tell Mine Online what version you're running by adding "version-md5" inside your server.properties file.
+            <br/>
+            The MD5s for various servers can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a> . In the case where there are multiple versions, any one will work.
+            <br/>
+            For example, a beta 1.7.3 server would use "version-md5=40F36C4EB86E8AC71D965EB0677D4A6F".
         </p>
         <li>Using the hMod Plugin</li>
         <p>
@@ -48,6 +54,24 @@
             The MD5s for various servers can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a> . In the case where there are multiple versions, any one will work.
             <br/>
             For example, a beta 1.7.3 server would use "version-md5=40F36C4EB86E8AC71D965EB0677D4A6F".
+        </p>
+        <li>Manually Listing your Server</li>
+        <p>
+            If you're comforable with scripting/programming, you can send the list request manually.
+            <br/>
+            <code>POST https://mineonline.codie.gg/api/servers</code>
+            The request takes a JSON content body.
+            <code>{
+    "name": "Codie's Classic Server",
+    "ip": "82.32.534.23",
+    "port": "26002",
+    "onlinemode": true,
+    "md5": "90632803F45C15164587256A08C0ECB4",
+    "whitelisted": false,
+    "maxUsers": 32,
+    "players": [ "codie", "kitsun3" ]
+}</code>
+            If you're hosting a classic server with verify-names=true, you'll also need to send a <a href="https://wiki.vg/Classic_Protocol#Heartbeats">classic heartbeat request</a>, but send it to mineonline.codie.gg instead of minecraft.net.
         </p>
     </ol>
 </p>
