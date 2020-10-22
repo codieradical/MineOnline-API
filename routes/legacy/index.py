@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from bson.objectid import ObjectId
 from os import path
 from os import walk
+from routes import serve
 
 from routes.legacy.levels import register_routes as register_levels_routes
 from routes.legacy.website import register_routes as register_website_routes
@@ -70,20 +71,15 @@ def register_routes(app, mongo):
 
         return Response(res, mimetype="text/xml")
 
+    @app.route('/resources/<path:path>') # classic
+    @app.route('/MinecraftResources/<path:path>') # classic
+    def classicResourcesRedirect(path):
+        return serve("/resources/default/" + path)
+
     #not sure when this was used, but it definately existed!
     @app.route('/haspaid.jsp')
     def haspaid():
         username = request.args.get('user')
-
-        # try:
-        #     users = mongo.db.users
-        #     user = users.find_one({"user" : username})
-        # except:
-        #     return Response("false")
-        
-        # if not user or not user['premium']:
-        #     return Response("false")
-
         return Response("true")
 
     # unknown endpoint, found in infdev, may be in more.
