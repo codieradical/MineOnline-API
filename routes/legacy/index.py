@@ -1,6 +1,8 @@
 from flask import request, send_file, Response
 from datetime import datetime, timedelta, timezone
 from bson.objectid import ObjectId
+from os import path
+from os import walk
 
 from routes.legacy.levels import register_routes as register_levels_routes
 from routes.legacy.website import register_routes as register_website_routes
@@ -11,13 +13,62 @@ def register_routes(app, mongo):
 
     @app.route('/resources/') # classic
     def resourcesArray():
-        return send_file("public/resources/index.txt")
+        return resourcesArrayVersioned("default")
+
+    @app.route('/resources/<version>/') # classic
+    def resourcesArrayVersioned(version):
+        resourcesRoot = "public/resources/" + version
+        if (not path.exists(resourcesRoot)):
+            return Response("Resources not found.", 404)
+
+        filenames = []
+        for subdir, dirs, files in walk(resourcesRoot):
+            for file in files:
+                filenames.append(path.join(subdir, file).replace(resourcesRoot + "\\", "").replace("\\", "/"))
+
+        res = ""
+        for filename in filenames:
+            filesize = path.getsize(resourcesRoot + "/" + filename)
+            modified = path.getmtime(resourcesRoot + "/" + filename) * 1000
+            res += ",".join([filename, str(filesize), str(int(modified))]) + "\r\n"
+
+        return Response(res, mimetype="text/plain")
 
     @app.route('/MinecraftResources/')
     def resourcesTree():
-        username = request.args.get('user')
-        downloadTicket = request.args.get('ticket')
-        return send_file("public/MinecraftResources/download.xml")
+        return resourcesTreeVersioned("default")
+
+    @app.route('/MinecraftResources/<version>/')
+    def resourcesTreeVersioned(version):
+        resourcesRoot = "public/resources/" + version
+        if (not path.exists(resourcesRoot)):
+            return Response("Resources not found.", 404)
+
+        filenames = []
+        for subdir, dirs, files in walk(resourcesRoot):
+            for file in files:
+                filenames.append(path.join(subdir, file).replace(resourcesRoot + "\\", "").replace("\\", "/"))
+
+        res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+                <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">\
+                <Name>MinecraftResources</Name>\
+                <Prefix></Prefix>\
+                <Marker></Marker>\
+                <MaxKeys>1000</MaxKeys>\
+                <IsTruncated>false</IsTruncated>"
+
+        for filename in filenames:
+            filesize = path.getsize(resourcesRoot + "/" + filename)
+            modified = path.getmtime(resourcesRoot + "/" + filename)
+            res += "<Contents>\
+                        <Key>" + filename + "</Key>\
+                        <LastModified>" + datetime.utcfromtimestamp(modified).strftime('%Y-%m-%dT%H:%M:%S.000Z') + "</LastModified>\
+                        <Size>" + str(filesize) + "</Size>\
+                    </Contents>"
+
+        res += "</ListBucketResult>"
+
+        return Response(res, mimetype="text/xml")
 
     #not sure when this was used, but it definately existed!
     @app.route('/haspaid.jsp')
