@@ -20,7 +20,7 @@ def register_routes(app, mongo):
     def resourcesArrayVersioned(version):
         resourcesRoot = "public/resources/" + version
         if (not path.exists(resourcesRoot)):
-            return Response("Resources not found.", 404)
+            resourcesRoot = "public/resources/default" + version
 
         filenames = []
         for subdir, dirs, files in walk(resourcesRoot):
@@ -43,7 +43,7 @@ def register_routes(app, mongo):
     def resourcesTreeVersioned(version):
         resourcesRoot = "public/resources/" + version
         if (not path.exists(resourcesRoot)):
-            return Response("Resources not found.", 404)
+            resourcesRoot = "public/resources/default" + version
 
         filenames = []
         for subdir, dirs, files in walk(resourcesRoot):
