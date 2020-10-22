@@ -29,8 +29,8 @@ def register_routes(app, mongo):
 
         res = ""
         for filename in filenames:
-            filesize = path.getsize(resourcesRoot + "/" + filename)
-            modified = path.getmtime(resourcesRoot + "/" + filename) * 1000
+            filesize = path.getsize(path.join(resourcesRoot, filename))
+            modified = path.getmtime(path.join(resourcesRoot, filename)) * 1000
             res += ",".join([filename, str(filesize), str(int(modified))]) + "\r\n"
 
         return Response(res, mimetype="text/plain")
@@ -59,8 +59,8 @@ def register_routes(app, mongo):
                 <IsTruncated>false</IsTruncated>"
 
         for filename in filenames:
-            filesize = path.getsize(resourcesRoot + "/" + filename)
-            modified = path.getmtime(resourcesRoot + "/" + filename)
+            filesize = path.getsize(path.join(resourcesRoot, filename))
+            modified = path.getmtime(path.join(resourcesRoot, filename))
             res += "<Contents>\
                         <Key>" + filename + "</Key>\
                         <LastModified>" + datetime.utcfromtimestamp(modified).strftime('%Y-%m-%dT%H:%M:%S.000Z') + "</LastModified>\
