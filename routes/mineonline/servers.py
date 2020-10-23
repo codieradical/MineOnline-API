@@ -13,6 +13,7 @@ from utils.database import getclassicservers
 from uuid import uuid4, UUID
 import jwt
 import socket
+import requests
 
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
@@ -201,9 +202,6 @@ def register_routes(app, mongo):
 
         return Response(json.dumps(mapServer(server)))
 
-    # Couly be stricter:
-    # 1. Verify token is still valid.
-    # 2. Check that username belongs to uuid
     @app.route('/api/servertoken')
     def getmojangmmpass():
         sessionId = request.args['sessionId']
@@ -216,6 +214,23 @@ def register_routes(app, mongo):
 
         if (decoded["spr"] != uuid):
             return Response("Invalid Session", 401)
+
+        valid = requests.post("https://authserver.mojang.com/validate", json={
+            "accessToken": sessionId
+        })
+
+        if valid.response_code != 200:
+            return Response("Invalid Session")
+
+        usernameCheck = requests.get("https://api.mojang.com/users/profiles/minecraft/" + username)
+        
+        if valid.response_code != 200:
+            return Response("Bad username.")
+
+        usernameCheck = json.loads(usernameCheck.content)
+
+        if not "id" in usernameCheck or usernameCheck["id"] != uuid:
+            return Response("Bad username.")
 
         try:
             server = mongo.db.classicservers.find_one({"ip": serverIP, "port": serverPort})
