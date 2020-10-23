@@ -27,7 +27,7 @@
 				 <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			 {% endif %}
  
-			 {% if server["onlinemode"] %}
+			 {% if server["onlinemode"] == True %}
 			 <span style="color: #00AA00">Online Mode</span>
 			 {% endif %}
 			 <br/>
@@ -70,7 +70,7 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["onlinemode"] %}
+			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
@@ -113,7 +113,7 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["onlinemode"] %}
+			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
@@ -156,7 +156,7 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["onlinemode"] %}
+			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
@@ -199,7 +199,7 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-			{% if server["onlinemode"] %}
+			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>

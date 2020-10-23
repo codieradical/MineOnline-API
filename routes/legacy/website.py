@@ -75,6 +75,11 @@ def register_routes(app, mongo):
             if ("public" in x and x["public"] == False):
                 return
 
+            onlinemode = x["onlinemode"]
+
+            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands" or x["name"] == "Old School Minecraft":
+                onlinemode = False
+
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
                 "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
@@ -83,7 +88,7 @@ def register_routes(app, mongo):
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
                 "name": x["name"],
-                "onlinemode": x["onlinemode"],
+                "onlinemode": onlinemode,
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
                 "versionName": x["versionName"] if "versionName" in x else None,

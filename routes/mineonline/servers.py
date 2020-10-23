@@ -140,6 +140,11 @@ def register_routes(app, mongo):
             if ("public" in x and x["public"] == False):
                 return
 
+            onlinemode = x["onlinemode"]
+
+            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands" or x["name"] == "Old School Minecraft":
+                onlinemode = False
+
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
                 "ip": x["connectAddress"] if "connectAddress" in x else x["ip"],
@@ -148,7 +153,7 @@ def register_routes(app, mongo):
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
                 "name": x["name"],
-                "onlinemode": x["onlinemode"],
+                "onlinemode": onlinemode,
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
                 "players": x["players"] if "players" in x else []
@@ -179,15 +184,20 @@ def register_routes(app, mongo):
                 server = mongo.db.featuredservers.find_one({"port": serverPort, "ip": serverIP})
 
                 if server == None:
-                    server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
+                    server = mongo.db.featuredservers.find_one({"connectAddress": serverIP, "port": serverPort})
             except:
                 pass
 
         if server == None:
             return Response("Server not found.", 404)
 
-        if not "name" == server:
+        if not "name" in server:
             return Response("Server not found.", 404)
+
+        onlinemode = server["onlinemode"]
+
+        if server["name"] == "AlphaPlace" or server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands" or server["name"] == "Old School Minecraft":
+            onlinemode = False
         
         def mapServer(x): 
             return { 
@@ -198,7 +208,7 @@ def register_routes(app, mongo):
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
                 "name": x["name"],
-                "onlinemode": x["onlinemode"],
+                "onlinemode": onlinemode,
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
                 "players": x["players"] if "players" in x else []
@@ -208,16 +218,16 @@ def register_routes(app, mongo):
 
     @app.route('/api/servertoken', methods=["POST"])
     def getmppass():
-        accessToken = request.json['accessToken']
+        accessToken = request.json['accessToken'] if "accessToken" in request.json else None 
         serverIP = request.json['serverIP']
         serverPort = request.json['serverPort']
-        userID = request.json['userID']
+        userID = request.json['userID'] if "userID" in request.json else None 
         username = request.json['username']
 
-        decoded = jwt.decode(accessToken, verify=False)
+        # decoded = jwt.decode(accessToken, verify=False)
 
-        if (decoded["spr"] != userID):
-            return Response("Invalid Session", 401)
+        # if (decoded["spr"] != userID):
+        #     return Response("Invalid Session", 401)
 
         sha_1 = hashlib.sha1()
         sha_1.update((serverIP + ":" + serverPort).encode("UTF-8"))
@@ -225,18 +235,18 @@ def register_routes(app, mongo):
 
         joinCheck = requests.get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + username + "&serverId=" + serverId + "&ip=" + serverIP)
 
-        if joinCheck.status_code != 200:
+        if joinCheck.status_code != 200 and joinCheck.status_code != 204:
             return Response("Invalid Session", 401)
 
-        usernameCheck = requests.get("https://api.mojang.com/users/profiles/minecraft/" + username)
+        # usernameCheck = requests.get("https://api.mojang.com/users/profiles/minecraft/" + username)
         
-        if usernameCheck.status_code != 200:
-            return Response("Bad username.", 400)
+        # if usernameCheck.status_code != 200:
+        #     return Response("Bad username.", 400)
 
-        usernameCheck = json.loads(usernameCheck.content)
+        # usernameCheck = json.loads(usernameCheck.content)
 
-        if not "id" in usernameCheck or usernameCheck["id"] != userID:
-            return Response("Bad username.", 400)
+        # if not "id" in usernameCheck or usernameCheck["id"] != userID:
+        #     return Response("Bad username.", 400)
 
         server = None
 
@@ -254,20 +264,19 @@ def register_routes(app, mongo):
                 return Response(mppass)
 
         try:
-            payload = len(username).to_bytes(2, byteorder='big') + utf8s_to_utf8m(username.encode("UTF-8")) + len("token:" + accessToken + ":" + userID).to_bytes(2, byteorder='big') + utf8s_to_utf8m(("token:" + accessToken + ":" + userID).encode("UTF-8"))
+            if userID != None and accessToken != None:
+                payload = len(username).to_bytes(2, byteorder='big') + utf8s_to_utf8m(username.encode("UTF-8")) + len("token:" + accessToken + ":" + userID).to_bytes(2, byteorder='big') + utf8s_to_utf8m(("token:" + accessToken + ":" + userID).encode("UTF-8"))
 
-            betacraft_servers = requests.post("https://betacraft.pl/server.jsp", data=payload, headers={
-                "User-Agent": "Java/1.8.0_265",
-                "Content-type": "application/x-www-form-urlencoded"
-            })
-            mppass = betacraft_servers.content.decode("UTF-8")
-            print(mppass)
-            mppass = mppass[mppass.index("join://" + serverIP + ":" + serverPort + "/") + len("join://" + serverIP + ":" + serverPort + "/"):]
-            mppass = mppass[:mppass.index("/")]
-            if mppass == "-":
-                mppass = "0"
-            print(mppass)
-            return Response(mppass)
+                betacraft_servers = requests.post("https://betacraft.pl/server.jsp", data=payload, headers={
+                    "User-Agent": "Java/1.8.0_265",
+                    "Content-type": "application/x-www-form-urlencoded"
+                })
+                mppass = betacraft_servers.content.decode("UTF-8")
+                mppass = mppass[mppass.index("join://" + serverIP + ":" + serverPort + "/") + len("join://" + serverIP + ":" + serverPort + "/"):]
+                mppass = mppass[:mppass.index("/")]
+                if mppass == "-":
+                    mppass = "0"
+                return Response(mppass)
         except:
             pass
 
