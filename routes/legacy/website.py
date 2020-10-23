@@ -77,6 +77,7 @@ def register_routes(app, mongo):
 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
+                "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
                 "ip": x["ip"],
                 "port": x["port"],
                 "users": x["users"] if "users" in x else "0",

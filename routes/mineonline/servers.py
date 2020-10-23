@@ -14,6 +14,8 @@ from uuid import uuid4, UUID
 import jwt
 import socket
 import requests
+from utils.modified_utf8 import utf8s_to_utf8m
+from io import BytesIO
 
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
@@ -167,6 +169,8 @@ def register_routes(app, mongo):
 
         try:
             server = mongo.db.classicservers.find_one({"port": serverPort, "ip": serverIP})
+            if server == None:
+                server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
         except:
             pass
 
@@ -202,35 +206,39 @@ def register_routes(app, mongo):
 
         return Response(json.dumps(mapServer(server)))
 
-    @app.route('/api/servertoken')
-    def getmojangmmpass():
-        sessionId = request.args['sessionId']
-        serverIP = request.args['serverIP']
-        serverPort = request.args['serverPort']
-        uuid = request.args['uuid']
-        username = request.args['username']
+    @app.route('/api/servertoken', methods=["POST"])
+    def getmppass():
+        accessToken = request.json['accessToken']
+        serverIP = request.json['serverIP']
+        serverPort = request.json['serverPort']
+        userID = request.json['userID']
+        username = request.json['username']
 
-        decoded = jwt.decode(sessionId, verify=False)
+        decoded = jwt.decode(accessToken, verify=False)
 
-        if (decoded["spr"] != uuid):
+        if (decoded["spr"] != userID):
             return Response("Invalid Session", 401)
 
-        valid = requests.post("https://authserver.mojang.com/validate", json={
-            "accessToken": sessionId
-        })
+        sha_1 = hashlib.sha1()
+        sha_1.update((serverIP + ":" + serverPort).encode("UTF-8"))
+        serverId = sha_1.hexdigest()
 
-        if valid.response_code != 200:
-            return Response("Invalid Session")
+        joinCheck = requests.get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + username + "&serverId=" + serverId + "&ip=" + serverIP)
+
+        if joinCheck.status_code != 200:
+            return Response("Invalid Session", 401)
 
         usernameCheck = requests.get("https://api.mojang.com/users/profiles/minecraft/" + username)
         
-        if valid.response_code != 200:
-            return Response("Bad username.")
+        if usernameCheck.status_code != 200:
+            return Response("Bad username.", 400)
 
         usernameCheck = json.loads(usernameCheck.content)
 
-        if not "id" in usernameCheck or usernameCheck["id"] != uuid:
-            return Response("Bad username.")
+        if not "id" in usernameCheck or usernameCheck["id"] != userID:
+            return Response("Bad username.", 400)
+
+        server = None
 
         try:
             server = mongo.db.classicservers.find_one({"ip": serverIP, "port": serverPort})
@@ -238,15 +246,29 @@ def register_routes(app, mongo):
                 server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
 
         except:
-            return Response("Server not found.", 404)
+            pass
 
-        if server:
+        if server != None:
             if "salt" in server and server['salt'] != None:
                 mppass = str(hashlib.md5((server['salt'] + username).encode('utf-8')).hexdigest())
                 return Response(mppass)
-            else:
-                return Response("Classic server not found.", 404)
-        else:
-            return Response("Server not found.", 404)
 
-        return Response("Something went wrong!", 500)
+        try:
+            payload = len(username).to_bytes(2, byteorder='big') + utf8s_to_utf8m(username.encode("UTF-8")) + len("token:" + accessToken + ":" + userID).to_bytes(2, byteorder='big') + utf8s_to_utf8m(("token:" + accessToken + ":" + userID).encode("UTF-8"))
+
+            betacraft_servers = requests.post("https://betacraft.pl/server.jsp", data=payload, headers={
+                "User-Agent": "Java/1.8.0_265",
+                "Content-type": "application/x-www-form-urlencoded"
+            })
+            mppass = betacraft_servers.content.decode("UTF-8")
+            print(mppass)
+            mppass = mppass[mppass.index("join://" + serverIP + ":" + serverPort + "/") + len("join://" + serverIP + ":" + serverPort + "/"):]
+            mppass = mppass[:mppass.index("/")]
+            if mppass == "-":
+                mppass = "0"
+            print(mppass)
+            return Response(mppass)
+        except:
+            pass
+
+        return Response("Server not found.", 404)
