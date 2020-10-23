@@ -12,6 +12,7 @@ from utils.versions import get_versions
 from utils.database import getclassicservers
 from uuid import uuid4, UUID
 import jwt
+import socket
 
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
@@ -50,12 +51,14 @@ def register_routes(app, mongo):
         versionName = "Unknown Version"
 
         if 'ip' in request.json and request.json['ip'] != '':
-            ip = request.json['ip'] # new to mineonline to allow classic servers on different IPs
+            connectAddress = request.json['ip'] # new to mineonline to allow classic servers on different IPs
         else:
-            ip = request.remote_addr
+            connectAddress = request.remote_addr
 
-        if ip == "127.0.0.1":
+        if connectAddress == "127.0.0.1":
             return Response("Can't list local servers.", 400)
+
+        ip = socket.gethostbyname(connectAddress) 
 
         classicservers = mongo.db.classicservers
 
@@ -90,6 +93,7 @@ def register_routes(app, mongo):
                     "salt": currentlisting["salt"] if currentlisting != None and "salt" in currentlisting else None,
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,
+                    "connectAddress": connectAddress,
                     "ip": ip,
                     "port": port,
                     "users": users,
@@ -135,7 +139,8 @@ def register_routes(app, mongo):
 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
-                "ip": x["ip"],
+                "ip": x["connectAddress"] if "connectAddress" in x else x["ip"],
+                "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
                 "port": x["port"],
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
@@ -167,15 +172,22 @@ def register_routes(app, mongo):
         if server == None:
             try:
                 server = mongo.db.featuredservers.find_one({"port": serverPort, "ip": serverIP})
+
+                if server == None:
+                    server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
             except:
                 pass
 
         if server == None:
             return Response("Server not found.", 404)
+
+        if not "name" == server:
+            return Response("Server not found.", 404)
         
         def mapServer(x): 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
+                "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
                 "ip": x["ip"],
                 "port": x["port"],
                 "users": x["users"] if "users" in x else "0",
@@ -207,6 +219,9 @@ def register_routes(app, mongo):
 
         try:
             server = mongo.db.classicservers.find_one({"ip": serverIP, "port": serverPort})
+            if server == None:
+                server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
+
         except:
             return Response("Server not found.", 404)
 

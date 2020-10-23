@@ -43,7 +43,12 @@
 			 </span>
 			 <br/>
 			 {% endif %}
-			 {% if server['ip'] %}
+			 {% if server['connectAddress'] %}
+			 <span>
+				 IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				 <br/>
+			 </span>
+			 {% elif server['ip'] %}
 			 <span>
 				 IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				 <br/>
@@ -81,7 +86,12 @@
 			</span>
 			<br/>
 			{% endif %}
-			{% if server['ip'] %}
+			{% if server['connectAddress'] %}
+			<span>
+				IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% elif server['ip'] %}
 			<span>
 				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				<br/>
@@ -119,7 +129,12 @@
 			</span>
 			<br/>
 			{% endif %}
-			{% if server['ip'] %}
+			{% if server['connectAddress'] %}
+			<span>
+				IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% elif server['ip'] %}
 			<span>
 				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				<br/>
@@ -157,7 +172,12 @@
 			</span>
 			<br/>
 			{% endif %}
-			{% if server['ip'] %}
+			{% if server['connectAddress'] %}
+			<span>
+				IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% elif server['ip'] %}
 			<span>
 				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				<br/>
@@ -195,7 +215,12 @@
 			</span>
 			<br/>
 			{% endif %}
-			{% if server['ip'] %}
+			{% if server['connectAddress'] %}
+			<span>
+				IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+				<br/>
+			</span>
+			{% elif server['ip'] %}
 			<span>
 				IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
 				<br/>

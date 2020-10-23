@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from os import path
 from os import walk
 from routes import serve
+import socket
 
 from routes.legacy.levels import register_routes as register_levels_routes
 from routes.legacy.website import register_routes as register_website_routes
@@ -71,10 +72,9 @@ def register_routes(app, mongo):
 
         return Response(res, mimetype="text/xml")
 
-    @app.route('/resources/<path:path>') # classic
     @app.route('/MinecraftResources/<path:path>') # classic
     def classicResourcesRedirect(path):
-        return serve("/resources/default/" + path)
+        return serve("resources/" + path)
 
     #not sure when this was used, but it definately existed!
     @app.route('/haspaid.jsp')
@@ -108,9 +108,11 @@ def register_routes(app, mongo):
         public = request.values['public']
         salt = request.values['salt']
         if 'ip' in request.values and request.values['ip'] != "":
-            ip = request.values['ip'] # new to mineonline to allow classic servers on different IPs
+            connectAddress = request.values['ip'] # new to mineonline to allow classic servers on different IPs
         else:
-            ip = request.remote_addr
+            connectAddress = request.remote_addr
+
+        ip = socket.gethostbyname(connectAddress) 
 
         if ip == "127.0.0.1":
             return Response("Can't list local servers.", 400)
@@ -133,6 +135,7 @@ def register_routes(app, mongo):
                 classicservers.update_one({"_id": _id}, { "$set": {
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,
+                    "connectAddress": connectAddress,
                     "ip": ip,
                     "port": port,
                     "users": users,
@@ -152,6 +155,7 @@ def register_routes(app, mongo):
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,
                     "ip": ip,
+                    "connectAddress": connectAddress,
                     "port": port,
                     "users": users,
                     "maxUsers": maxUsers,
