@@ -9,7 +9,7 @@ from glob import glob
 import os
 
 def register_routes(app, mongo):
-    @app.route('/resources') # classic
+    @app.route('/sounds') # classic
     def resourcesIndex():
         if not request.is_secure:
             return redirect(request.url.replace('http://', 'https://'))
