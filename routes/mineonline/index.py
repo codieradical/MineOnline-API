@@ -7,6 +7,7 @@ from uuid import uuid4, UUID
 from routes.mineonline.skins import register_routes as register_skins_routes
 from routes.mineonline.servers import register_routes as register_servers_routes
 from routes.mineonline.worlds import register_routes as register_worlds_routes
+from routes.mineonline.resources import register_routes as register_resources_routes
 import os
 import bcrypt
 
@@ -15,6 +16,7 @@ def register_routes(app, mongo):
     register_skins_routes(app, mongo)
     register_servers_routes(app, mongo)
     register_worlds_routes(app, mongo)
+    register_resources_routes(app, mongo)    
 
     @app.route('/api/getmyip')
     def ipaddress():

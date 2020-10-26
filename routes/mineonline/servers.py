@@ -169,6 +169,9 @@ def register_routes(app, mongo):
         serverIP = request.args.get('serverIP')
         serverPort = request.args.get('serverPort')
 
+        if serverIP.startswith("192.168") or serverIP == "127.0.0.1" or serverIP == "localhost":
+            serverIP = request.remote_addr
+
         if(serverPort == None):
             serverPort = "25565"
 
@@ -223,6 +226,9 @@ def register_routes(app, mongo):
         serverPort = request.json['serverPort']
         userID = request.json['userID'] if "userID" in request.json else None 
         username = request.json['username']
+
+        if serverIP.startswith("192.168") or serverIP == "127.0.0.1" or serverIP == "localhost":
+            serverIP = request.remote_addr
 
         # decoded = jwt.decode(accessToken, verify=False)
 
