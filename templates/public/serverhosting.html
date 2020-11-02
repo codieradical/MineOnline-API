@@ -5,47 +5,37 @@
 {% block content %}
 
 <h1>Hosting Servers</h1>
-
-<h2>Using Online Mode / Verify Names</h2>
-
+<h3>Using Online-Mode and adding them to the list.</h3>
 <p>
     Online-mode for old servers has been abandoned by Mojang, and has been broken until now.
     Online-Mode is a great way to keep your servers secure, the way Mojang used to do it.
-    There are modded servers out there capable of running in online-mode, these are compatible with Mine Online.
-    <br/><br/>
-    The easiest way to host a server in online-mode is to host it through Mine Online using this command:
-    <code>java -cp MineOnline.jar gg.codie.mineonline.Server (server.jar) [launch arguments]</code>
-    <br/>
-    It's that simple, when you host a server through Mine Online, you can set online-mode or verify-names in the sever.properties file to true, and players using Mine Online or online-mode mods will be able to join.
-</p>
 
-<h2>Listing your Server</h2>
-<p>
-    There are a few ways to add a server to the list. All of them add live player lists.
-    In all cases, servers can be named using "server-name" in the server.properties file.<br/>
+    All methods listed below can fix online-mode for any legacy server, and add them to the server list.
+    <br/>
+    In all cases, servers can be named using "server-name" in the server.properties file.
     You can also list a specific ip, port or domain name using the "serverlist-ip" and "serverlist-port" properties.
+    Or, you can turn off listing all together, by setting "public" to false.
     <ol>
         <li><b>Using Mine Online</b></li>
         <p>
-            If you host any server through mine online, from c0.0.15a to release 1.16 (or whatever the latest version is 😛), by default it will be added to the server list.
+            Servers can be launched through MineOnline using this command:
+            <code>java -cp MineOnline.jar gg.codie.mineonline.Server (server.jar) [launch arguments]</code>
             <br/>
-            You can opt-out of this by setting public to false in the server properties file.
-            <br/><br/>
-            If you're hosting a non-vanilla server (like bukkit, hmod), you'll tell Mine Online what version you're running by adding "version-md5" inside your server.properties file.
+            If you're hosting a non-vanilla server (like bukkit), you'll tell Mine Online what version you're running by adding "version-md5" inside your server.properties file.
             <br/>
             The MD5s for various servers can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a> . In the case where there are multiple versions, any one will work.
             <br/>
             For example, a beta 1.7.3 server would use "version-md5=40F36C4EB86E8AC71D965EB0677D4A6F".
         </p>
-        <li>Using the hMod Plugin</li>
+        <li><b>Using the hMod Plugin</b></li>
         <p>
-            If you'd prefer not to host your server using Mine Online, and are running hMod, a plugin is available to list your server.
+            If you'd prefer not to host your server using Mine Online, and are running hMod, a plugin is available to list your server and/or restore online-mode.
             <br/>
             <a href="https://github.com/codieradical/MineOnlineBroadcast-hMod/releases/latest/download/MineOnlineBroadcast.jar">Download</a>
         </p>
-        <li>Using the Bukkit Plugin</li>
+        <li><b>Using the Bukkit Plugin</b></li>
         <p>
-            If you'd prefer not to host your server using Mine Online, and are running Bukkit, a plugin is available to list your server.
+            If you'd prefer not to host your server using Mine Online, and are running Bukkit, a plugin is available to list your server and/or restore online-mode.
             <br/>
             <a href="https://github.com/codieradical/MineOnlineBroadcast-Bukkit/releases/latest/download/MineOnlineBroadcast-Bukkit.jar">Download</a>
             <br/>

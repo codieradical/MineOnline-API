@@ -39,6 +39,8 @@ def register_routes(app, mongo):
 
     @app.route("/api/servers", methods=["POST"])
     def addserver():
+        #print(request.json["name"])
+        
         port = request.json['port']
         maxUsers = request.json['max']
         name = request.json['name']
@@ -110,7 +112,8 @@ def register_routes(app, mongo):
                     "uuid": uuid
                 })
 
-            except:
+            except Exception as err:
+                #print(err)
                 return Response("Something went wrong.", 500)
 
 
@@ -142,7 +145,7 @@ def register_routes(app, mongo):
 
             onlinemode = x["onlinemode"]
 
-            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands" or x["name"] == "Old School Minecraft":
+            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
                 onlinemode = False
 
             return { 
@@ -199,7 +202,7 @@ def register_routes(app, mongo):
 
         onlinemode = server["onlinemode"]
 
-        if server["name"] == "AlphaPlace" or server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands" or server["name"] == "Old School Minecraft":
+        if server["name"] == "AlphaPlace" or server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands":
             onlinemode = False
         
         def mapServer(x): 
