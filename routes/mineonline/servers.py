@@ -55,7 +55,7 @@ def register_routes(app, mongo):
 
         versionName = "Unknown Version"
 
-        if 'ip' in request.json and request.json['ip'] != '':
+        if 'ip' in request.json and request.json['ip'] != '' and request.json['ip'] != '0.0.0.0':
             connectAddress = request.json['ip'] # new to mineonline to allow classic servers on different IPs
         else:
             connectAddress = request.remote_addr
