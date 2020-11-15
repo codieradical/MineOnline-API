@@ -43,7 +43,7 @@ def register_routes(app, mongo):
         
         port = request.json['port']
         maxUsers = request.json['max']
-        name = request.json['name']
+        name = str(request.json["name"])[:59]
         onlinemode = request.json['onlinemode']
         md5 = request.json['md5']
         whitelisted = request.json['whitelisted']
@@ -52,6 +52,14 @@ def register_routes(app, mongo):
         players = []
         if("players" in request.json):
             players = request.json["players"]
+
+        motd = None
+        if "motd" in request.json:
+            motd = str(request.json["motd"])[:59]
+
+        dontListPlayers = False
+        if "dontListPlayers" in request.json:
+            dontListPlayers = request.json["dontListPlayers"]
 
         versionName = "Unknown Version"
 
@@ -109,7 +117,9 @@ def register_routes(app, mongo):
                     "md5": md5,
                     "whitelisted": whitelisted,
                     "players": players,
-                    "uuid": uuid
+                    "uuid": uuid,
+                    "dontListPlayers": dontListPlayers,
+                    "motd": motd
                 })
 
             except Exception as err:
@@ -137,8 +147,6 @@ def register_routes(app, mongo):
         def mapServer(x): 
             if(not"md5" in x):
                 return
-            if(not "whitelisted" in x):
-                return
 
             if ("public" in x and x["public"] == False):
                 return
@@ -159,7 +167,9 @@ def register_routes(app, mongo):
                 "onlinemode": onlinemode,
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
-                "players": x["players"] if "players" in x else []
+                "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
+                "motd": x["motd"] if "motd" in x else None,
+                "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
             }
 
         servers = list(map(mapServer, servers))
@@ -217,7 +227,9 @@ def register_routes(app, mongo):
                 "onlinemode": onlinemode,
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
-                "players": x["players"] if "players" in x else []
+                "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
+                "motd": x["motd"] if "motd" in x else None,
+                "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
             }
 
         return Response(json.dumps(mapServer(server)))

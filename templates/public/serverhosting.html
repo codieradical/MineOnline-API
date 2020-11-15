@@ -12,9 +12,22 @@
 
     All methods listed below can fix online-mode for any legacy server, and add them to the server list.
     <br/>
-    In all cases, servers can be named using "server-name" in the server.properties file.
-    You can also list a specific ip, port or domain name using the "serverlist-ip" and "serverlist-port" properties.
-    Or, you can turn off listing all together, by setting "public" to false.
+    <h4>Server Properties</h4>
+    <ul>
+        <li><b>server-name</b> Name your server on the list. (59 characters max)</li>
+        <li><b>motd</b> An MOTD for the server list. (59 characters max)</li>
+        <li><b>serverlist-ip</b> Show a custom IP / Host name on the server list.</li>
+        <li><b>serverlist-port</b> Show a custom port on the server list.</li>
+        <li><b>public</b> Toggle server listing. Set to false to hide a server.</li>
+        <li><b>dont-list-players</b> Hide the player list on your server.</li>
+        <li><b>online-mode</b> Enable server authentication for Alpha - Release</li>
+        <li><b>verify-names</b> Enable server authentication for Classic</li>
+        <li><b>discord-token</b> A discord bot token, set to enable the discord chat bridge, a discord-channel is also required.</li>
+        <li><b>discord-channel</b> A discord channel ID, set to enable the discord chat bridge, a discord-token is also required.</li>
+        <li><b>discord-webhook-url</b> An optional discord webhook URL to send messages through.</li>
+        <li><b>version-md5</b> Specify which server version you're hosting.<br>
+            In some cases this can be automatically detected, a list of server MD5s can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a>.</li>
+    </ul>
     <ol>
         <li><b>Using Mine Online</b></li>
         <p>

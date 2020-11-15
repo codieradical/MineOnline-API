@@ -24,14 +24,12 @@ def allowed_file(filename):
 
 def filterClassicServers(x):
     return x['versionName'].lower()[0] == 'c'
-def filterIndevServers(x):
-    return x['versionName'].lower()[0] == 'i'
 def filterAlphaServers(x):
     return x['versionName'].lower()[0] == 'a'
 def filterBetaServers(x):
     return x['versionName'].lower()[0] == 'b'
 def filterOtherServers(x):
-    return x['versionName'].lower()[0] != 'c' and x['versionName'].lower()[0] != 'i' and x['versionName'].lower()[0] != 'a' and x['versionName'].lower()[0] != 'b'
+    return x['versionName'].lower()[0] != 'c' and x['versionName'].lower()[0] != 'a' and x['versionName'].lower()[0] != 'b'
 
 def register_routes(app, mongo):
     @app.route('/')
@@ -92,6 +90,8 @@ def register_routes(app, mongo):
                 "md5": x["md5"],
                 "isMineOnline": x["isMineOnline"] if "isMineOnline" in x else True,
                 "versionName": x["versionName"] if "versionName" in x else None,
+                "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
+                "motd": x["motd"] if "motd" in x else None,
                 "players": x["players"] if "players" in x else []
             }
 
@@ -100,7 +100,6 @@ def register_routes(app, mongo):
         serverCount = len(servers)
 
         classicServers = list(filter(filterClassicServers, servers))
-        indevServers = list(filter(filterIndevServers, servers))
         alphaServers = list(filter(filterAlphaServers, servers))
         betaServers = list(filter(filterBetaServers, servers))
         # releaseServers = list(filter(filterReleaseServers, servers))
@@ -110,7 +109,6 @@ def register_routes(app, mongo):
 
         return render_template("public/servers.html", 
             classicServers=classicServers,
-            indevServers=indevServers,
             alphaServers=alphaServers,
             betaServers=betaServers,
             otherServers=otherServers,
