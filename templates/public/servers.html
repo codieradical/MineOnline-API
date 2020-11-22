@@ -16,6 +16,53 @@
 
 </p>
 
+{% if featuredServers|length > 0 %}
+	<h3>Featured</h3>
+	{% for server in featuredServers %}
+		{% if 'md5' in server %}
+		   <hr/>
+		   {% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
+			   <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
+		   {% else %}
+			   <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			{% endif %}
+
+		   {% if server["onlinemode"] == True %}
+		   <span style="color: #00AA00">Online Mode</span>
+		   {% endif %}
+		   <br/>
+
+		   {% if 'motd' in server and server['motd'] != None %}
+			   {{server['motd']|striptags}}<br/>
+		   {% endif %}
+
+		   {% if 'players' in server and server['players'] |length > 0 and (not 'dontListPlayers' in server or server['dontListPlayers'] == False) %}
+			<span>Players: 
+			   {% for player in server['players'] %}
+			   <span style="display: inline-block;">
+				   <img class="playerHead" onerror="this.src = '/char-head.png'" src="/api/playerhead?user={{player|striptags}}">
+				   {{player[:16]|striptags}}
+			   </span>
+			   {% endfor %}
+		   </span>
+		   <br/>
+		   {% endif %}
+		   {% if server['connectAddress'] %}
+		   <span>
+			   IP: <b>{{server['connectAddress']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+			   <br/>
+		   </span>
+		   {% elif server['ip'] %}
+		   <span>
+			   IP: <b>{{server['ip']|striptags}}{% if server['port'] != "25565" %}:{{server['port']|striptags}}{% endif %}</b>
+			   <br/>
+		   </span>
+		   {% endif %}
+	   {% endif %}
+   {% endfor %}
+   <br/>
+   {% endif %}
+
  <h3>Beta</h3>
  {% if betaServers|length > 0 %}
 	 {% for server in betaServers %}

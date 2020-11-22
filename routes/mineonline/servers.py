@@ -16,6 +16,15 @@ import socket
 import requests
 from utils.modified_utf8 import utf8s_to_utf8m
 from io import BytesIO
+import functools
+
+def sort_servers(server2, server1):
+    if server1["featured"]:
+        return 1
+    elif server2["featured"]:
+        return -1
+    else:
+        return int(server1["users"]) - int(server2["users"])
 
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
@@ -153,8 +162,15 @@ def register_routes(app, mongo):
 
             onlinemode = x["onlinemode"]
 
-            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
+            if x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
                 onlinemode = False
+
+            featured = False
+            try:
+                if mongo.db.serversfeatured.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
+                    featured = True
+            except:
+                pass
 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
@@ -170,10 +186,12 @@ def register_routes(app, mongo):
                 "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
                 "motd": x["motd"] if "motd" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
+                "featured": featured
             }
 
         servers = list(map(mapServer, servers))
         servers = list(filter(filterServer, servers))
+        servers.sort(key=functools.cmp_to_key(sort_servers))
 
         return Response(json.dumps(servers))
 
@@ -212,7 +230,7 @@ def register_routes(app, mongo):
 
         onlinemode = server["onlinemode"]
 
-        if server["name"] == "AlphaPlace" or server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands":
+        if server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands":
             onlinemode = False
         
         def mapServer(x): 

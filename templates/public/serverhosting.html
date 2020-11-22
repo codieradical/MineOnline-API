@@ -15,7 +15,7 @@
     <h4>Server Properties</h4>
     <ul>
         <li><b>server-name</b> Name your server on the list. (59 characters max)</li>
-        <li><b>motd</b> An MOTD for the server list. (59 characters max)</li>
+        <li><b>serverlist-motd</b> An MOTD for the server list. (59 characters max)</li>
         <li><b>serverlist-ip</b> Show a custom IP / Host name on the server list.</li>
         <li><b>serverlist-port</b> Show a custom port on the server list.</li>
         <li><b>public</b> Toggle server listing. Set to false to hide a server.</li>
@@ -29,7 +29,7 @@
             In some cases this can be automatically detected, a list of server MD5s can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a>.</li>
     </ul>
     <ol>
-        <li><b>Using Mine Online</b></li>
+        <li><b>Using MineOnline</b></li>
         <p>
             Servers can be launched through MineOnline using this command:
             <code>java -cp MineOnline.jar gg.codie.mineonline.Server (server.jar) [launch arguments]</code>
@@ -40,19 +40,13 @@
             <br/>
             For example, a beta 1.7.3 server would use "version-md5=40F36C4EB86E8AC71D965EB0677D4A6F".
         </p>
-        <li><b>Using the hMod Plugin</b></li>
+        <li><b>Using the Plugin (hMod or Bukkit)</b></li>
         <p>
-            If you'd prefer not to host your server using Mine Online, and are running hMod, a plugin is available to list your server and/or restore online-mode.
+            If you'd prefer not to host your server using Mine Online, and are running hMod or Bukkit, a plugin is available to list your server and/or restore online-mode.
             <br/>
-            <a href="https://github.com/codieradical/MineOnlineBroadcast-hMod/releases/latest/download/MineOnlineBroadcastHMod.jar">Download</a>
-        </p>
-        <li><b>Using the Bukkit Plugin</b></li>
-        <p>
-            If you'd prefer not to host your server using Mine Online, and are running Bukkit, a plugin is available to list your server and/or restore online-mode.
+            <a href="https://github.com/codieradical/MineOnlineBroadcast/releases/latest/download/MineOnlineBroadcast.jar">Download</a>
             <br/>
-            <a href="https://github.com/codieradical/MineOnlineBroadcast-Bukkit/releases/latest/download/MineOnlineBroadcastBukkit.jar">Download</a>
-            <br/>
-            To tell Mine Online what version you're running, you'll need to specify the "version-md5" inside your server.properties file.
+            If you're using bukkit, you'll need to specify the "version-md5" inside your server.properties file.
             <br/>
             The MD5s for various servers can be found <a href="https://github.com/codieradical/MineOnline/tree/master/res/versions/server">here</a> . In the case where there are multiple versions, any one will work.
             <br/>

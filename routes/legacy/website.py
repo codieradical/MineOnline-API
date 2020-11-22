@@ -22,14 +22,16 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.')[-1].lower() in ALLOWED_EXTENSIONS
 
+def filterFeaturedServers(x):
+    return x['featured'] == True
 def filterClassicServers(x):
-    return x['versionName'].lower()[0] == 'c'
+    return x['versionName'].lower()[0] == 'c' and x['featured'] == False
 def filterAlphaServers(x):
-    return x['versionName'].lower()[0] == 'a'
+    return x['versionName'].lower()[0] == 'a' and x['featured'] == False
 def filterBetaServers(x):
-    return x['versionName'].lower()[0] == 'b'
+    return x['versionName'].lower()[0] == 'b' and x['featured'] == False
 def filterOtherServers(x):
-    return x['versionName'].lower()[0] != 'c' and x['versionName'].lower()[0] != 'a' and x['versionName'].lower()[0] != 'b'
+    return x['versionName'].lower()[0] != 'c' and x['versionName'].lower()[0] != 'a' and x['versionName'].lower()[0] != 'b' and x['featured'] == False
 
 def register_routes(app, mongo):
     @app.route('/')
@@ -75,13 +77,20 @@ def register_routes(app, mongo):
 
             onlinemode = x["onlinemode"]
 
-            if x["name"] == "AlphaPlace" or x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands" or x["name"] == "Old School Minecraft":
+            if x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
                 onlinemode = False
+
+            featured = False
+            try:
+                if mongo.db.serversfeatured.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
+                    featured = True
+            except:
+                pass
 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
                 "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
-                "ip": x["ip"],
+                "connectAddress": x["connectAddress"] if "connectAddress" in x else x["ip"],
                 "port": x["port"],
                 "users": x["users"] if "users" in x else "0",
                 "maxUsers": x["maxUsers"] if "maxUsers" in x else "24",
@@ -92,13 +101,15 @@ def register_routes(app, mongo):
                 "versionName": x["versionName"] if "versionName" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
                 "motd": x["motd"] if "motd" in x else None,
-                "players": x["players"] if "players" in x else []
+                "players": x["players"] if "players" in x else [],
+                "featured": featured
             }
 
         servers = list(map(mapServer, servers))
         servers = list(filter(filterServer, servers))
         serverCount = len(servers)
 
+        featuredServers = list(filter(filterFeaturedServers, servers))
         classicServers = list(filter(filterClassicServers, servers))
         alphaServers = list(filter(filterAlphaServers, servers))
         betaServers = list(filter(filterBetaServers, servers))
@@ -108,6 +119,7 @@ def register_routes(app, mongo):
 
 
         return render_template("public/servers.html", 
+            featuredServers=featuredServers,
             classicServers=classicServers,
             alphaServers=alphaServers,
             betaServers=betaServers,
