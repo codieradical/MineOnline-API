@@ -72,7 +72,7 @@ def register_routes(app, mongo):
 
         useBetaEvolutionsAuth = False
         if "useBetaEvolutionsAuth" in request.json:
-            useBetaEvolutionsAuth  = request.json["useBetaEvolutionsAuth "]
+            useBetaEvolutionsAuth  = request.json["useBetaEvolutionsAuth"]
 
         versionName = "Unknown Version"
 
@@ -133,7 +133,7 @@ def register_routes(app, mongo):
                     "uuid": uuid,
                     "dontListPlayers": dontListPlayers,
                     "motd": motd,
-                    "useBetaEvolutionsAuth ": useBetaEvolutionsAuth
+                    "useBetaEvolutionsAuth": useBetaEvolutionsAuth
                 })
 
             except Exception as err:
