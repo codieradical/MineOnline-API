@@ -70,6 +70,10 @@ def register_routes(app, mongo):
         if "dontListPlayers" in request.json:
             dontListPlayers = request.json["dontListPlayers"]
 
+        useBetaEvolutionsAuth = False
+        if "useBetaEvolutionsAuth" in request.json:
+            useBetaEvolutionsAuth  = request.json["useBetaEvolutionsAuth "]
+
         versionName = "Unknown Version"
 
         if 'ip' in request.json and request.json['ip'] != '' and request.json['ip'] != '0.0.0.0':
@@ -128,7 +132,8 @@ def register_routes(app, mongo):
                     "players": players,
                     "uuid": uuid,
                     "dontListPlayers": dontListPlayers,
-                    "motd": motd
+                    "motd": motd,
+                    "useBetaEvolutionsAuth ": useBetaEvolutionsAuth
                 })
 
             except Exception as err:
@@ -162,8 +167,11 @@ def register_routes(app, mongo):
 
             onlinemode = x["onlinemode"]
 
-            if x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
+            if x["name"] == "Oldcraft":
                 onlinemode = False
+
+            if "useBetaEvolutionsAuth" in x and x["useBetaEvolutionsAuth"] == True:
+                onlinemode = True
 
             featured = False
             try:
@@ -186,7 +194,8 @@ def register_routes(app, mongo):
                 "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
                 "motd": x["motd"] if "motd" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
-                "featured": featured
+                "featured": featured,
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
             }
 
         servers = list(map(mapServer, servers))
@@ -230,8 +239,11 @@ def register_routes(app, mongo):
 
         onlinemode = server["onlinemode"]
 
-        if server["name"] == "Oldcraft" or server["name"] == "RetroMC" or server["name"] == "BetaLands":
+        if server["name"] == "Oldcraft":
             onlinemode = False
+
+        if "useBetaEvolutionsAuth" in server and server["useBetaEvolutionsAuth"] == True:
+                onlinemode = True
         
         def mapServer(x): 
             return { 
@@ -248,6 +260,7 @@ def register_routes(app, mongo):
                 "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
                 "motd": x["motd"] if "motd" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
             }
 
         return Response(json.dumps(mapServer(server)))

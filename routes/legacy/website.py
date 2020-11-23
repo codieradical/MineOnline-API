@@ -77,8 +77,11 @@ def register_routes(app, mongo):
 
             onlinemode = x["onlinemode"]
 
-            if x["name"] == "Oldcraft" or x["name"] == "RetroMC" or x["name"] == "BetaLands":
+            if x["name"] == "Oldcraft":
                 onlinemode = False
+
+            if "useBetaEvolutionsAuth" in x and x["useBetaEvolutionsAuth"] == True:
+                onlinemode = True
 
             featured = False
             try:
@@ -102,7 +105,8 @@ def register_routes(app, mongo):
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
                 "motd": x["motd"] if "motd" in x else None,
                 "players": x["players"] if "players" in x else [],
-                "featured": featured
+                "featured": featured,
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
             }
 
         servers = list(map(mapServer, servers))
