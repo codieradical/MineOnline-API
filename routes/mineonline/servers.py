@@ -48,9 +48,7 @@ def register_routes(app, mongo):
 
     @app.route("/api/servers", methods=["POST"])
     def addserver():
-        #print(request.json["name"])
-        
-        port = request.json['port']
+        port = request.json['port'] if "port" in request.json else "25565"
         maxUsers = request.json['max']
         name = str(request.json["name"])[:59]
         onlinemode = request.json['onlinemode']
@@ -72,7 +70,11 @@ def register_routes(app, mongo):
 
         useBetaEvolutionsAuth = False
         if "useBetaEvolutionsAuth" in request.json:
-            useBetaEvolutionsAuth  = request.json["useBetaEvolutionsAuth"]
+            useBetaEvolutionsAuth = request.json["useBetaEvolutionsAuth"]
+
+        serverIcon = None
+        if "serverIcon" in request.json:
+            serverIcon = request.json["serverIcon"]
 
         versionName = "Unknown Version"
 
@@ -133,7 +135,8 @@ def register_routes(app, mongo):
                     "uuid": uuid,
                     "dontListPlayers": dontListPlayers,
                     "motd": motd,
-                    "useBetaEvolutionsAuth": useBetaEvolutionsAuth
+                    "useBetaEvolutionsAuth": useBetaEvolutionsAuth,
+                    "serverIcon": serverIcon
                 })
 
             except Exception as err:
@@ -195,7 +198,8 @@ def register_routes(app, mongo):
                 "motd": x["motd"] if "motd" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
                 "featured": featured,
-                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False,
+                "serverIcon": x["serverIcon"] if "serverIcon" in x else None
             }
 
         servers = list(map(mapServer, servers))
@@ -245,6 +249,13 @@ def register_routes(app, mongo):
         if "useBetaEvolutionsAuth" in server and server["useBetaEvolutionsAuth"] == True:
                 onlinemode = True
         
+        featured = False
+        try:
+            if mongo.db.serversfeatured.find_one({"connectAddress": server["connectAddress"], "port": server["port"]}) != None:
+                featured = True
+        except:
+            pass
+
         def mapServer(x): 
             return { 
                 "createdAt": str(x["createdAt"]) if "createdAt" in x else None,
@@ -260,7 +271,9 @@ def register_routes(app, mongo):
                 "players": x["players"] if "players" in x and (not "dontListPlayers" in x or x["dontListPlayers"] == False) else [],
                 "motd": x["motd"] if "motd" in x else None,
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
-                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
+                "featured": featured,
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False,
+                "serverIcon": x["serverIcon"] if "serverIcon" in x else None
             }
 
         return Response(json.dumps(mapServer(server)))

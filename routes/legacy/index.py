@@ -53,7 +53,10 @@ def register_routes(app, mongo):
         else:
             connectAddress = request.remote_addr
 
-        ip = socket.gethostbyname(connectAddress) 
+        try:
+            ip = socket.gethostbyname(connectAddress)
+        except:
+            ip = connectAddress
 
         if ip == "127.0.0.1":
             return Response("Can't list local servers.", 400)

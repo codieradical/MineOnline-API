@@ -20,23 +20,26 @@
 	<h3>Featured</h3>
 	{% for server in featuredServers %}
 		{% if 'md5' in server %}
-		   <hr/>
-		   {% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
+			<hr/>
+			{% if "serverIcon" in server and server["serverIcon"] != None %}
+				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
+			{% endif %}
+		   	{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
 			   <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
-		   {% else %}
+		   	{% else %}
 			   <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
-		   {% if server["onlinemode"] == True %}
-		   <span style="color: #00AA00">Online Mode</span>
-		   {% endif %}
-		   <br/>
+			{% if server["onlinemode"] == True %}
+				<span style="color: #00AA00">Online Mode</span>
+			{% endif %}
+			<br/>
 
-		   {% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None %}
 			   {{server['motd']|striptags}}<br/>
-		   {% endif %}
+			{% endif %}
 
-		   {% if 'players' in server and server['players'] |length > 0 and (not 'dontListPlayers' in server or server['dontListPlayers'] == False) %}
+			{% if 'players' in server and server['players'] |length > 0 and (not 'dontListPlayers' in server or server['dontListPlayers'] == False) %}
 			<span>Players: 
 			   {% for player in server['players'] %}
 			   <span style="display: inline-block;">
@@ -68,12 +71,15 @@
 	 {% for server in betaServers %}
 		 {% if 'md5' in server %}
 			<hr/>
+			{% if "serverIcon" in server and server["serverIcon"] != None %}
+				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
+			{% endif %}
 			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
-		 	{% endif %}
- 
+			{% endif %}
+			
 			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
@@ -115,6 +121,9 @@
 	{% for server in alphaServers %}
 		{% if 'md5' in server %}
 			<hr/>
+			{% if "serverIcon" in server and server["serverIcon"] != None %}
+				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
+			{% endif %}
 			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
@@ -162,6 +171,9 @@
 	{% for server in classicServers %}
 		{% if 'md5' in server %}
 			<hr/>
+			{% if "serverIcon" in server and server["serverIcon"] != None %}
+				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
+			{% endif %}
 			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
@@ -209,6 +221,9 @@
 	{% for server in otherServers %}
 		{% if 'md5' in server %}
 			<hr/>
+			{% if "serverIcon" in server and server["serverIcon"] != None %}
+				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
+			{% endif %}
 			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}

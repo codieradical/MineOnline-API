@@ -106,7 +106,8 @@ def register_routes(app, mongo):
                 "motd": x["motd"] if "motd" in x else None,
                 "players": x["players"] if "players" in x else [],
                 "featured": featured,
-                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False
+                "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False,
+                "serverIcon": x["serverIcon"] if "serverIcon" in x else None
             }
 
         servers = list(map(mapServer, servers))

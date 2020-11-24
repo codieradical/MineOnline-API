@@ -452,45 +452,10 @@ a.loginpanel:visited { /*color:white;		*/
   text-decoration:none;
 }
 
-.payment-method {
-  background-color:#422;
-  margin-bottom:8px;
-  float:left;
-  width:85px;
-  margin-right: 8px;
-  height:28px;
-  cursor:pointer;
-  overflow:hidden;
-  padding-left:4px;
-  padding-top:8px;
-  background: transparent no-repeat right top;
+.server-icon {
+	position: relative;
+	top: 40px;
+	left: -10px;
+	margin-left: -64px;
+	margin-top: -64px;
 }
-
-.payment-method-special-mbwallet {
-  background-image: url(/res/moneybookers-wallet.png);
-}
-
-.payment-method-special-paypal {
-  background-image: url(/res/paypal.png);
-}
-/*
-     FILE ARCHIVED ON 08:39:21 Jul 14, 2011 AND RETRIEVED FROM THE
-     INTERNET ARCHIVE ON 04:46:31 May 07, 2020.
-     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
-
-     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
-     SECTION 108(a)(3)).
-*/
-/*
-playback timings (ms):
-  exclusion.robots.policy: 0.128
-  RedisCDXSource: 1.413
-  CDXLines.iter: 14.529 (3)
-  esindex: 0.01
-  exclusion.robots: 0.137
-  PetaboxLoader3.datanode: 129.095 (4)
-  PetaboxLoader3.resolve: 1256.777 (4)
-  LoadShardBlock: 256.888 (3)
-  captures_list: 279.824
-  load_resource: 1153.54
-*/
