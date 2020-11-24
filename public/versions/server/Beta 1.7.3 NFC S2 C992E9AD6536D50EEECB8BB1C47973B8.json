@@ -1,0 +1,9 @@
+{
+  "name": "Beta 1.7.3 NFC Server S2",
+  "md5": "C992E9AD6536D50EEECB8BB1C47973B8",
+  "sha256": "75F93AE53B1E92A6A23B9BA6996FFE7AE5E51CEE9E838992371F62F8ECFAFEF6",
+  "type": "server",
+  "clientName": "nfc_1.8.7_02",
+  "baseVersion": "nfc_187_02",
+  "legacy": true
+}
