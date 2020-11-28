@@ -17,6 +17,8 @@ import requests
 from utils.modified_utf8 import utf8s_to_utf8m
 from io import BytesIO
 import functools
+import base64
+from PIL import Image
 
 def sort_servers(server2, server1):
     if server1["featured"]:
@@ -74,7 +76,14 @@ def register_routes(app, mongo):
 
         serverIcon = None
         if "serverIcon" in request.json:
-            serverIcon = request.json["serverIcon"]
+            try:
+                serverIcon = request.json["serverIcon"]
+                imgdata = base64.b64decode(str(serverIcon))
+                image = Image.open(BytesIO(imgdata))
+                if (image.width > 64 or image.height > 64):
+                    serverIcon = None
+            except:
+                serverIcon = None
 
         versionName = "Unknown Version"
 
@@ -112,6 +121,7 @@ def register_routes(app, mongo):
 
             # Delete existing server record
             classicservers.delete_many({"port": port, "ip": ip})
+            classicservers.delete_many({"port": port, "connectAddress": connectAddress})
 
             users = request.json['users'] if 'users' in request.json else 0
 
