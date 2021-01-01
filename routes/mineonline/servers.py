@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from pymongo import IndexModel, ASCENDING, DESCENDING, errors
 import sys
 from utils.versions import get_versions
-from utils.database import getclassicservers
+from utils.database import getservers
 from uuid import uuid4, UUID
 import jwt
 import socket
@@ -31,12 +31,12 @@ def sort_servers(server2, server1):
 def register_routes(app, mongo):
     @app.route("/api/servers/<uuid>", methods=["DELETE"])
     def deleteserver(uuid):
-        mongo.db.classicservers.delete_one({"uuid": str(UUID(uuid))})
+        mongo.db.servers.delete_one({"uuid": str(UUID(uuid))})
         return Response("ok", 200)
 
     @app.route("/api/servers/stats", methods=["GET"])
     def serverstats():
-        servers = getclassicservers(mongo)
+        servers = getservers(mongo)
         servercount = len(servers)
         playercount = 0
         for server in servers:
@@ -97,7 +97,7 @@ def register_routes(app, mongo):
 
         ip = socket.gethostbyname(connectAddress) 
 
-        classicservers = mongo.db.classicservers
+        servers = mongo.db.servers
 
         if(port == None):
             port = "25565"
@@ -116,18 +116,17 @@ def register_routes(app, mongo):
 
         try:
             # Find an existing salted server
-            currentlisting = classicservers.find_one({"port": port, "ip": ip})
+            currentlisting = servers.find_one({"port": port, "ip": ip})
             expireDuration = timedelta(minutes = 2)
 
             # Delete existing server record
-            classicservers.delete_many({"port": port, "ip": ip})
-            classicservers.delete_many({"port": port, "connectAddress": connectAddress})
+            servers.delete_many({"port": port, "ip": ip})
 
             users = request.json['users'] if 'users' in request.json else 0
 
 
             try:
-                classicservers.insert_one({
+                servers.insert_one({
                     "salt": currentlisting["salt"] if currentlisting != None and "salt" in currentlisting else None,
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,
@@ -166,10 +165,10 @@ def register_routes(app, mongo):
 
     @app.route("/api/servers", methods=["GET"])
     def listservers():
-        mineOnlineServers = getclassicservers(mongo)
-        featuredServers = list(mongo.db.featuredservers.find())
-        featuredServers = [dict(server, **{'isMineOnline': False}) for server in featuredServers]
-        servers = mineOnlineServers + featuredServers
+        mineOnlineServers = getservers(mongo)
+        staticservers = list(mongo.db.staticservers.find())
+        staticservers = [dict(server, **{'isMineOnline': False}) for server in staticservers]
+        servers = mineOnlineServers + staticservers
 
         def mapServer(x): 
             if(not"md5" in x):
@@ -188,7 +187,7 @@ def register_routes(app, mongo):
 
             featured = False
             try:
-                if mongo.db.serversfeatured.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
+                if mongo.db.featuredservers.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
                     featured = True
             except:
                 pass
@@ -209,7 +208,8 @@ def register_routes(app, mongo):
                 "dontListPlayers": x["dontListPlayers"] if "dontListPlayers" in x else False,
                 "featured": featured,
                 "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False,
-                "serverIcon": x["serverIcon"] if "serverIcon" in x else None
+                "serverIcon": x["serverIcon"] if "serverIcon" in x else None,
+                "whitelisted": x["whitelisted"] if "whitelisted" in x else False
             }
 
         servers = list(map(mapServer, servers))
@@ -230,18 +230,18 @@ def register_routes(app, mongo):
             serverPort = "25565"
 
         try:
-            server = mongo.db.classicservers.find_one({"port": serverPort, "ip": serverIP})
+            server = mongo.db.servers.find_one({"port": serverPort, "ip": serverIP})
             if server == None:
-                server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
+                server = mongo.db.servers.find_one({"connectAddress": serverIP, "port": serverPort})
         except:
             pass
 
         if server == None:
             try:
-                server = mongo.db.featuredservers.find_one({"port": serverPort, "ip": serverIP})
+                server = mongo.db.staticservers.find_one({"port": serverPort, "ip": serverIP})
 
                 if server == None:
-                    server = mongo.db.featuredservers.find_one({"connectAddress": serverIP, "port": serverPort})
+                    server = mongo.db.staticservers.find_one({"connectAddress": serverIP, "port": serverPort})
             except:
                 pass
 
@@ -261,7 +261,7 @@ def register_routes(app, mongo):
         
         featured = False
         try:
-            if mongo.db.serversfeatured.find_one({"connectAddress": server["connectAddress"], "port": server["port"]}) != None:
+            if mongo.db.featuredservers.find_one({"connectAddress": server["connectAddress"], "port": server["port"]}) != None:
                 featured = True
         except:
             pass
@@ -289,12 +289,15 @@ def register_routes(app, mongo):
         return Response(json.dumps(mapServer(server)))
 
     @app.route('/api/servertoken', methods=["POST"])
-    def getmppass():
+    def getservertoken():
         accessToken = request.json['accessToken'] if "accessToken" in request.json else None 
         serverIP = request.json['serverIP']
         serverPort = request.json['serverPort']
         userID = request.json['userID'] if "userID" in request.json else None 
         username = request.json['username']
+
+        if username == "arceus413":
+            return abort(404)
 
         if serverIP.startswith("192.168") or serverIP == "127.0.0.1" or serverIP == "localhost" or serverIP == "0.0.0.0":
             serverIP = request.remote_addr
@@ -307,11 +310,6 @@ def register_routes(app, mongo):
         sha_1 = hashlib.sha1()
         sha_1.update((serverIP + ":" + serverPort).encode("UTF-8"))
         serverId = sha_1.hexdigest()
-
-        joinCheck = requests.get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + username + "&serverId=" + serverId + "&ip=" + serverIP)
-
-        if joinCheck.status_code != 200 and joinCheck.status_code != 204:
-            return Response("Invalid Session", 401)
 
         # usernameCheck = requests.get("https://api.mojang.com/users/profiles/minecraft/" + username)
         
@@ -326,18 +324,26 @@ def register_routes(app, mongo):
         server = None
 
         try:
-            server = mongo.db.classicservers.find_one({"ip": serverIP, "port": serverPort})
+            server = mongo.db.servers.find_one({"ip": serverIP, "port": serverPort})
             if server == None:
-                server = mongo.db.classicservers.find_one({"connectAddress": serverIP, "port": serverPort})
+                server = mongo.db.servers.find_one({"connectAddress": serverIP, "port": serverPort})
 
         except:
             pass
 
         if server != None:
+            joinCheck = requests.get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + username + "&serverId=" + serverId + "&ip=" + serverIP)
+
+            if joinCheck.status_code != 200 and joinCheck.status_code != 204:
+                return Response("Invalid Session", 401)
             if "salt" in server and server['salt'] != None:
                 mppass = str(hashlib.md5((server['salt'] + username).encode('utf-8')).hexdigest())
                 return Response(mppass)
+        #         return Response(json.dumps({ "mppass": mppass }))
+        # else:
+        #     return Response("Server not found.", 404)
 
+        # Temp betacraft auth.
         try:
             if userID != None and accessToken != None:
                 payload = len(username).to_bytes(2, byteorder='big') + utf8s_to_utf8m(username.encode("UTF-8")) + len("token:" + accessToken + ":" + userID).to_bytes(2, byteorder='big') + utf8s_to_utf8m(("token:" + accessToken + ":" + userID).encode("UTF-8"))
@@ -355,4 +361,42 @@ def register_routes(app, mongo):
         except:
             pass
 
+        return Response("Server not found.", 404)
+
+
+    @app.route('/api/mppass', methods=["POST"])
+    def getmppass():
+        serverIP = request.json['serverIP']
+        serverPort = request.json['serverPort']
+        username = request.json['username']
+
+        if username == "arceus413":
+            return abort(404)
+
+        if serverIP.startswith("192.168") or serverIP == "127.0.0.1" or serverIP == "localhost" or serverIP == "0.0.0.0":
+            serverIP = request.remote_addr
+
+        sha_1 = hashlib.sha1()
+        sha_1.update((serverIP + ":" + serverPort).encode("UTF-8"))
+        serverId = sha_1.hexdigest()
+
+        server = None
+
+        try:
+            server = mongo.db.servers.find_one({"ip": serverIP, "port": serverPort})
+            if server == None:
+                server = mongo.db.servers.find_one({"connectAddress": serverIP, "port": serverPort})
+
+        except:
+            pass
+
+        if server != None:
+            joinCheck = requests.get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + username + "&serverId=" + serverId + "&ip=" + serverIP)
+
+            if joinCheck.status_code != 200 and joinCheck.status_code != 204:
+                return Response("Invalid Session", 401)
+            if "salt" in server and server['salt'] != None:
+                mppass = str(hashlib.md5((server['salt'] + username).encode('utf-8')).hexdigest())
+                return Response(json.dumps({ "mpPass": mppass }), 200, mimetype="application/json")
+                
         return Response("Server not found.", 404)

@@ -1,20 +1,25 @@
 from datetime import datetime, timezone
 import time
 
-def getclassicservers(mongo):
+def getservers(mongo):
     def removeExpired(server):
         if not "expiresAt" in server:
             return False
 
         if (server["expiresAt"].replace(tzinfo=timezone.utc) <= datetime.now(timezone.utc)):
-            mongo.db.classicservers.delete_many({"_id": server["_id"]})
+            mongo.db.servers.delete_many({"_id": server["_id"]})
             # Hang on to the salt
             if (server["salt"] != None):
-                mongo.db.classicservers.insert_one({"ip": server["ip"], "port": server["port"], "salt": server["salt"]})
+                mongo.db.servers.insert_one({"ip": server["ip"], "port": server["port"], "salt": server["salt"]})
+            return False
+
+        # Banned Servers
+        if (server["ip"] == "51.222.28.199" and server["port"] == "12413"):
+            mongo.db.servers.delete_many({"_id": server["_id"]})
             return False
             
         return True
-    classicservers = list(mongo.db.classicservers.find())
-    classicservers = list(filter(removeExpired, classicservers))
-    classicservers.sort(key=lambda x: len(x["players"]) if "players" in x else 0, reverse=True)
-    return classicservers
+    servers = list(mongo.db.servers.find())
+    servers = list(filter(removeExpired, servers))
+    servers.sort(key=lambda x: len(x["players"]) if "players" in x else 0, reverse=True)
+    return servers

@@ -13,7 +13,7 @@ import re
 from routes import serve
 from utils.servers import *
 from PIL import Image
-from utils.database import getclassicservers
+from utils.database import getservers
 
 ALLOWED_EXTENSIONS = ['png', 'mine', 'dat']
 MAX_WORLD_SIZE = 10000000 # 10 MB
@@ -47,14 +47,14 @@ def register_routes(app, mongo):
         return redirect("/servers")
 
     @app.route('/servers')
-    def classicservers():
+    def servers():
         if not request.is_secure:
             return redirect(request.url.replace('http://', 'https://'))
 
-        mineOnlineServers = getclassicservers(mongo)
-        featuredServers = list(mongo.db.featuredservers.find())
-        featuredServers = [dict(server, **{'isMineOnline': False}) for server in featuredServers]
-        servers = mineOnlineServers + featuredServers
+        mineOnlineServers = getservers(mongo)
+        staticservers = list(mongo.db.staticservers.find())
+        staticservers = [dict(server, **{'isMineOnline': False}) for server in staticservers]
+        servers = mineOnlineServers + staticservers
 
         usersCount = 0
         privateCount = 0
@@ -85,7 +85,7 @@ def register_routes(app, mongo):
 
             featured = False
             try:
-                if mongo.db.serversfeatured.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
+                if mongo.db.featuredservers.find_one({"connectAddress": x["connectAddress"], "port": x["port"]}) != None:
                     featured = True
             except:
                 pass
@@ -107,7 +107,8 @@ def register_routes(app, mongo):
                 "players": x["players"] if "players" in x else [],
                 "featured": featured,
                 "useBetaEvolutionsAuth": x["useBetaEvolutionsAuth"] if "useBetaEvolutionsAuth" in x else False,
-                "serverIcon": x["serverIcon"] if "serverIcon" in x else None
+                "serverIcon": x["serverIcon"] if "serverIcon" in x else None,
+                "whitelisted": x["whitelisted"] if "whitelisted" in x else False,
             }
 
         servers = list(map(mapServer, servers))

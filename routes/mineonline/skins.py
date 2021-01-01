@@ -9,6 +9,7 @@ from PIL import Image, PngImagePlugin, ImageOps
 from io import BytesIO, StringIO
 import requests
 import base64
+from datetime import date
 
 def register_routes(app, mongo):
     @app.route('/api/player/<uuid>/customcape', methods=['GET'])
@@ -19,6 +20,19 @@ def register_routes(app, mongo):
             return Response(base64.b64decode(profile["textures"]["cape"]))
         except Exception as e:
             return abort(404)
+
+    @app.route('/api/player/<uuid>/eventcape', methods=['GET'])
+    def eventcloak(uuid):
+        if (date.today().day == 24 or date.today().day == 25) and date.today().month == 12:
+            return Response("https://mineonline.codie.gg/MinecraftCloaks/xmas2010.png")
+
+        if date.today().day == 31 and date.today().month == 12 and date.today().year == 2020:
+            return Response("https://mineonline.codie.gg/MinecraftCloaks/newyear2021.png")
+
+        if uuid == "7a8218cb88524ae1b79fa915a255a62a":
+            return Response("https://mineonline.codie.gg/MinecraftCloaks/codieradical.png")
+
+        return abort(404)
     
     @app.route('/api/playerhead', methods=['GET'])
     def playerHead():

@@ -61,7 +61,7 @@ def register_routes(app, mongo):
         if ip == "127.0.0.1":
             return Response("Can't list local servers.", 400)
 
-        classicservers = mongo.db.classicservers
+        servers = mongo.db.servers
 
         user = None
 
@@ -70,13 +70,13 @@ def register_routes(app, mongo):
 
         try:
             # Find an existing versioned server
-            currentlisting = classicservers.find_one({"port": port, "ip": ip, "md5": {'$nin': [None, '']}})
+            currentlisting = servers.find_one({"port": port, "ip": ip, "md5": {'$nin': [None, '']}})
             # Delete the rest
             expireDuration = timedelta(minutes = 2)
             if(currentlisting):
                 _id = currentlisting['_id']
-                classicservers.delete_many({"port": port, "ip": ip, "_id": {"$ne": _id}})
-                classicservers.update_one({"_id": _id}, { "$set": {
+                servers.delete_many({"port": port, "ip": ip, "_id": {"$ne": _id}})
+                servers.update_one({"_id": _id}, { "$set": {
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,
                     "connectAddress": connectAddress,
@@ -91,10 +91,10 @@ def register_routes(app, mongo):
 
             else:
                 # Delete existing server record
-                classicservers.delete_many({"port": port, "ip": ip})
+                servers.delete_many({"port": port, "ip": ip})
                 _id = ObjectId()
 
-                classicservers.insert_one({
+                servers.insert_one({
                     "_id": _id,
                     "createdAt": datetime.utcnow(),
                     "expiresAt": datetime.now(timezone.utc) + expireDuration,

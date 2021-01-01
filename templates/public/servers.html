@@ -30,12 +30,16 @@
 			   <b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
+			{% if 'whitelisted' in server and  server["whitelisted"] == True %}
+				<span>🔒 </span>
+			{% endif %}
+
 			{% if server["onlinemode"] == True %}
 				<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
 
-			{% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None and server['motd'] != "" %}
 			   {{server['motd']|striptags}}<br/>
 			{% endif %}
 
@@ -80,12 +84,16 @@
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 			
+			{% if 'whitelisted' in server and  server["whitelisted"] == True %}
+				<span>🔒 </span>
+			{% endif %}
+
 			{% if server["onlinemode"] == True %}
 			<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
 
-			{% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None and server['motd'] != "" %}
 				{{server['motd']|striptags}}<br/>
 			{% endif %}
  
@@ -124,10 +132,14 @@
 			{% if "serverIcon" in server and server["serverIcon"] != None %}
 				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
 			{% endif %}
-			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
+			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
+			{% endif %}
+
+			{% if 'whitelisted' in server and  server["whitelisted"] == True %}
+				<span>🔒 </span>
 			{% endif %}
 
 			{% if server["onlinemode"] == True %}
@@ -135,7 +147,7 @@
 			{% endif %}
 			<br/>
 
-			{% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None and server['motd'] != "" %}
 				{{server['motd']|striptags}}<br/>
 			{% endif %}
 
@@ -174,18 +186,22 @@
 			{% if "serverIcon" in server and server["serverIcon"] != None %}
 				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
 			{% endif %}
-			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
+			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
+			{% if 'whitelisted' in server and  server["whitelisted"] == True %}
+				<span>🔒 </span>
+			{% endif %}
+
 			{% if server["onlinemode"] == True %}
-			<span style="color: #00AA00">Online Mode</span>
+				<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
 
-			{% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None and server['motd'] != "" %}
 				{{server['motd']|striptags}}<br/>
 			{% endif %}
 
@@ -224,18 +240,22 @@
 			{% if "serverIcon" in server and server["serverIcon"] != None %}
 				<img class="server-icon" src="data:image/png;base64, {{server["serverIcon"]}}"/>
 			{% endif %}
-			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server or server['dontListPlayers'] == True) %}
+			{% if ('isMineOnline' in server and server['isMineOnline'] == False) or ('dontListPlayers' in server and server['dontListPlayers'] == True) %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}}
 			{% else %}
 				<b>{{server['name']|striptags}}</b> - {{server['versionName']|striptags or "Unknown Version"}} - {{server['users']|striptags}}/{{server['maxUsers']|striptags}}
 			{% endif %}
 
+			{% if 'whitelisted' in server and  server["whitelisted"] == True %}
+				<span>🔒 </span>
+			{% endif %}
+
 			{% if server["onlinemode"] == True %}
-			<span style="color: #00AA00">Online Mode</span>
+				<span style="color: #00AA00">Online Mode</span>
 			{% endif %}
 			<br/>
 
-			{% if 'motd' in server and server['motd'] != None %}
+			{% if 'motd' in server and server['motd'] != None and server['motd'] != "" %}
 				{{server['motd']|striptags}}<br/>
 			{% endif %}
 

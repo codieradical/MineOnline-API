@@ -35,7 +35,7 @@ The Mongo Database contains two Collections.
 These are created for server authentication when a logged in player attempts to join a server.
 If the server is in online-mode, it will only allow joins if a serverjoin exists, then the serverjoin is deleted.
 
-- Classicservers
+- servers
 
 These are classic servers displayed on the server list.
 Documents are created on server heartbeat, and expire after about a minute and a half unless another heartbeat request is received.
